@@ -1,20 +1,15 @@
 package org.firstinspires.ftc.teamcode.teleOp;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="TeleOp One Controller")
-public class Reee extends OpMode {
-
-//    public enum LiftState {
-//        START,
-//        LOW, MID, HIGH
-//,    }
-
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="TeleOpOld Deprecated Two Controller")
+public class TeleOpOld extends OpMode {
     DcMotor frontLeft;
     DcMotor frontRight;
     DcMotor backLeft;
@@ -22,8 +17,9 @@ public class Reee extends OpMode {
     DcMotor lift;
     int liftPosition;
     double clawPosition;
-//    LiftState liftState;
+    //    LiftState liftState;
     int liftGoingTo;
+    boolean liftManual = false;
 
     Servo claw;
     double claw_pos;
@@ -31,9 +27,9 @@ public class Reee extends OpMode {
     static final double CLAW_OPEN = 0.39;
 
     static final int LIFT_DOWN = 0;
-    static final int LIFT_LOW = 1800;
-    static final int LIFT_MID = 3100;
-    static final int LIFT_HIGH = 4350;
+    static final int LIFT_LOW = 1900;
+    static final int LIFT_MID = 3200;
+    static final int LIFT_HIGH = 4500;
 
     BNO055IMU imu;
 
@@ -48,11 +44,11 @@ public class Reee extends OpMode {
         lift = hardwareMap.dcMotor.get("linearSlide"); // slkdjflkjsdflkjslfkdj
         claw = hardwareMap.servo.get("claw");
 
-        power = 0.5;
+        power = 0.6;
 
         frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
         backRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        lift.setDirection(DcMotorSimple.Direction.REVERSE);
+        lift.setDirection(DcMotorSimple.Direction.FORWARD);
         claw.setDirection(Servo.Direction.FORWARD);
 
         lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -66,7 +62,7 @@ public class Reee extends OpMode {
         clawPosition = 0;
 
 //        liftState = LiftState.LOW;
-        liftGoingTo = 0;
+        liftGoingTo = LIFT_DOWN;
     }
 
     @Override
@@ -79,37 +75,55 @@ public class Reee extends OpMode {
             lift.setPower(0.05);
         } */
 
-        if (gamepad1.a) {
-            liftGoingTo = LIFT_DOWN;
-        } if (gamepad1.b) {
-            liftGoingTo = LIFT_LOW;
-        } if (gamepad1.x) {
-            liftGoingTo = LIFT_MID;
-        } if (gamepad1.y) {
-            liftGoingTo = LIFT_HIGH;
+        if(gamepad2.dpad_up) {
+            liftManual = true;
         }
 
-        if (Math.abs(liftGoingTo - lift.getCurrentPosition()) < 20) {
-            // prevent lift from sliding down
-            if(lift.getCurrentPosition() > 4000 && liftGoingTo == LIFT_HIGH) {
-                // add more power cuz it slips at the top
-                lift.setPower(0.03);
+        if(gamepad2.dpad_down) {
+            liftManual = false;
+        }
+
+        if (!liftManual) {
+            if (gamepad2.a) {
+                liftGoingTo = LIFT_DOWN;
+            } if (gamepad2.b) {
+                liftGoingTo = LIFT_LOW;
+            } if (gamepad2.x) {
+                liftGoingTo = LIFT_MID;
+            } if (gamepad2.y) {
+                liftGoingTo = LIFT_HIGH;
+            }
+
+            if (Math.abs(liftGoingTo - lift.getCurrentPosition()) < 20) {
+                // prevent lift from sliding down
+                if(lift.getCurrentPosition() > 4000) {
+                    // add more power cuz it slips at the top
+                    lift.setPower(0.01);
+                } else {
+                    lift.setPower(0.01);
+                }
+            } else {
+                // active lift motion
+                // note: might continue without stopping if ping gets too high
+                if (liftGoingTo < lift.getCurrentPosition()) {
+                    lift.setPower(-0.5);
+                } else {
+                    lift.setPower(0.5);
+                }
+            }
+        } else {
+            // manual lift
+            if(Math.abs(gamepad2.left_stick_y) > 0.1) {
+                lift.setPower(-gamepad2.left_stick_y * 0.7);
             } else {
                 lift.setPower(0.01);
             }
-        } else {
-            // active lift motion
-            // note: might continue without stopping if ping gets too high
-            if (liftGoingTo < lift.getCurrentPosition()) {
-                lift.setPower(-0.5);
-            } else {
-                lift.setPower(0.5);
-            }
+            liftGoingTo = lift.getCurrentPosition();
         }
 
-        if(gamepad1.dpad_left) {
+        if(gamepad2.dpad_left) {
             claw_pos = CLAW_GRAB;
-        } else if (gamepad1.dpad_right) {
+        } else if (gamepad2.dpad_right) {
             claw_pos = CLAW_OPEN;
         }
 
@@ -121,6 +135,7 @@ public class Reee extends OpMode {
 
         telemetry.addData("Lift Position: ", liftPosition);
         telemetry.addData("Claw Position: ", clawPosition);
+        telemetry.addData("Manual: ", liftManual);
     }
 
     public void setWheelPower(double power) {

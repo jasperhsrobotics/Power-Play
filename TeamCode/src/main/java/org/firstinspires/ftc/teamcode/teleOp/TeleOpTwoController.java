@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.subsystem.Chassis;
 import org.firstinspires.ftc.teamcode.subsystem.Claw;
 import org.firstinspires.ftc.teamcode.subsystem.Lift;
+import org.firstinspires.ftc.teamcode.subsystem.LiftPID;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="TeleOp Two Controller")
 public class TeleOpTwoController extends OpMode {
@@ -52,6 +53,6 @@ public class TeleOpTwoController extends OpMode {
         chassis.update(-gamepad1.left_stick_y, gamepad1.left_stick_x * 1.1, gamepad1.right_stick_x);
         claw.update();
 
-        telemetry.addData("ree:", Claw.goingTo);
+        //telemetry.addData("power:", lift.seePID());
     }
 }

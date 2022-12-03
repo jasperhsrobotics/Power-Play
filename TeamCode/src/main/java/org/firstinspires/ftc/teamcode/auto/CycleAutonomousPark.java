@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.auto;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -10,6 +11,9 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.subsystem.Claw;
+import org.firstinspires.ftc.teamcode.subsystem.Lift;
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -18,7 +22,8 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import java.util.ArrayList;
 
 @Autonomous
-public class LeftAutonomousPark extends LinearOpMode {
+public class CycleAutonomousPark extends LinearOpMode {
+    boolean finished = false;
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
 
@@ -47,25 +52,13 @@ public class LeftAutonomousPark extends LinearOpMode {
     public void runOpMode() {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
-        Trajectory beginToCone = drive.trajectoryBuilder(new Pose2d())
-                .lineToLinearHeading(new Pose2d(40, 0, 90))
-                .build();
+        Claw claw;
+        Lift lift;
 
-        Trajectory strafeL25 = drive.trajectoryBuilder(new Pose2d())
-                .strafeRight(25)
-                .build();
-        Trajectory strafeR25 = drive.trajectoryBuilder(new Pose2d())
-                .strafeRight(-25)
-                .build();
-        Trajectory forward30A = drive.trajectoryBuilder(new Pose2d())
-                .forward(25)
-                .build();
-        Trajectory forward30B = drive.trajectoryBuilder(strafeR25.end())
-                .forward(25)
-                .build();
-        Trajectory forward30C = drive.trajectoryBuilder(strafeL25.end())
-                .forward(25)
-                .build();
+        claw = new Claw(hardwareMap);
+        lift = new Lift(hardwareMap);
+        lift.setManual(false);
+        lift.reset();
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
@@ -87,10 +80,100 @@ public class LeftAutonomousPark extends LinearOpMode {
 
         telemetry.setMsTransmissionInterval(50);
 
+
+
         /*
          * The INIT-loop:
          * This REPLACES waitForStart!
          */
+
+        drive.setPoseEstimate(new Pose2d(-34, 62, Math.toRadians(270)));
+
+        finished = false;
+        TrajectorySequence ree = drive.trajectorySequenceBuilder(new Pose2d(-34, 62, Math.toRadians(270)))
+                .waitSeconds(0.5)
+                // Preload
+                .lineTo(new Vector2d(-34, 60))
+                .addDisplacementMarker(() -> {
+                    lift.setGoingTo(1);
+                })
+                .lineTo(new Vector2d(-34, 52))
+                .turn(Math.toRadians(-90))
+                .strafeTo(new Vector2d(-34, 22))
+                .forward(7)
+                .waitSeconds(0.1)
+                .addDisplacementMarker(() -> {
+                    claw.setGoingTo(1);
+                })
+                .waitSeconds(0.1)
+                .addDisplacementMarker(() -> {
+                    lift.setGoingToSpecific(480);
+                })
+                .strafeTo(new Vector2d(-34, 12))
+
+                // Get Cone 1
+                .addDisplacementMarker(() -> {
+                    claw.setGoingTo(1);
+                })
+                .lineTo(new Vector2d(-63.8, 12))
+                .waitSeconds(0.2)
+                .addDisplacementMarker(() -> {
+                    claw.setGoingTo(0);
+                })
+                .waitSeconds(0.7)
+                .addDisplacementMarker(() -> {
+                    lift.setGoingTo(3);
+                })
+                .waitSeconds(0.5)
+                // Drop first cone
+                .lineTo(new Vector2d(-13, 12))
+                .turn(Math.toRadians(45))
+                .lineTo(new Vector2d(-18, 5))
+                .addDisplacementMarker(() -> {
+                    claw.setGoingTo(1);
+                })
+                .forward(-5)
+                .turn(Math.toRadians(-45))
+
+                // Get Cone 2
+                .addDisplacementMarker(() -> {
+                    claw.setGoingTo(1);
+                    lift.setGoingToSpecific(450);
+                })
+                .lineTo(new Vector2d(-63.8, 12))
+                .waitSeconds(0.2)
+                .addDisplacementMarker(() -> {
+                    claw.setGoingTo(0);
+                })
+                .waitSeconds(0.7)
+                .addDisplacementMarker(() -> {
+                    lift.setGoingTo(3);
+                })
+                .waitSeconds(0.5)
+
+                // Drop second cone
+                .lineTo(new Vector2d(-13, 12))
+                .turn(Math.toRadians(45))
+                .lineTo(new Vector2d(-18, 5))
+                .addDisplacementMarker(() -> {
+                    claw.setGoingTo(1);
+                })
+                .forward(-5)
+                .turn(Math.toRadians(-45))
+
+                .strafeRight(28)
+
+                .addDisplacementMarker(() -> {
+                    finished = true;
+                })
+
+                .build();
+
+        TrajectorySequence moveForward = drive.trajectorySequenceBuilder(new Pose2d(-34, 62, Math.toRadians(270)))
+                .forward(24)
+                .build();
+
+
         while (!isStarted() && !isStopRequested()) {
             ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
 
@@ -150,19 +233,27 @@ public class LeftAutonomousPark extends LinearOpMode {
             telemetry.update();
         }
 
+        claw.setGoingTo(0);
 
+        drive.followTrajectorySequenceAsync(ree);
+
+        while (opModeIsActive()) {
+            drive.update();
+            lift.update(0);
+            claw.update();
+            if (!drive.isBusy()) break;
+            //if (finished == true) break;
+        }
 
         /* Actually do something useful */
         if (tagOfInterest == null || tagOfInterest.id == LEFT) {
-            drive.followTrajectory(strafeL25);
-            drive.followTrajectory(forward30C);
-        } else if (tagOfInterest.id == MIDDLE) {
-            drive.followTrajectory(forward30A);
-        } else {
-            drive.followTrajectory(strafeR25);
-            drive.followTrajectory(forward30B);
-        }
 
+        } else if (tagOfInterest.id == MIDDLE) {
+            drive.followTrajectorySequence(moveForward);
+        } else {
+            drive.followTrajectorySequence(moveForward);
+            drive.followTrajectorySequence(moveForward);
+        }
 
 //        /* You wouldn't have this in your autonomous, this is just to prevent the sample from ending */
 //        while (opModeIsActive()) {sleep(20);}

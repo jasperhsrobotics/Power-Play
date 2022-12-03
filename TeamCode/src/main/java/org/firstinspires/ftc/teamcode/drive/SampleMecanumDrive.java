@@ -56,8 +56,8 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
  */
 @Config
 public class SampleMecanumDrive extends MecanumDrive {
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0, 0, 1);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(0, 0, 1);
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(8, 0, 1);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(8, 0, 1);
 
     public static double LATERAL_MULTIPLIER = 1.2;
 
@@ -121,10 +121,11 @@ public class SampleMecanumDrive extends MecanumDrive {
 
 
         // Initializes the drivetrain motors
-        leftFront = hardwareMap.get(DcMotorEx.class, "frontLeft");
-        leftRear = hardwareMap.get(DcMotorEx.class, "backLeft");
-        rightRear = hardwareMap.get(DcMotorEx.class, "backRight");
-        rightFront = hardwareMap.get(DcMotorEx.class, "frontRight");
+        //TODO: fix this by reversing front and back in drivetrain config and setting this back
+        leftFront = hardwareMap.get(DcMotorEx.class, "backLeft");
+        leftRear = hardwareMap.get(DcMotorEx.class, "frontLeft");
+        rightRear = hardwareMap.get(DcMotorEx.class, "frontRight");
+        rightFront = hardwareMap.get(DcMotorEx.class, "backRight");
 
         // Adds the motors to a list
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);

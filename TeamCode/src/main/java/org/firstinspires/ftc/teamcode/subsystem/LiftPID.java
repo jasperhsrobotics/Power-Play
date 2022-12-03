@@ -1,10 +1,14 @@
 package org.firstinspires.ftc.teamcode.subsystem;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-public class Lift {
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
+public class LiftPID {
     static private DcMotor lift;
 
     final int POS_DOWN = 15;
@@ -15,43 +19,34 @@ public class Lift {
     static int goingTo;
     static boolean manual;
 
-    public Lift(HardwareMap hardwareMap) {
+    PID pid;
+    public static double p = 0;
+    public static double i = 0;
+    public static double d = 0;
+
+    MultipleTelemetry telemetry;
+
+    public LiftPID(HardwareMap hardwareMap, Telemetry telemetry) {
+        pid = new PID(p, i, d);
+
+        this.telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+
         lift = hardwareMap.dcMotor.get("linearSlide");
 
-        lift.setDirection(DcMotorSimple.Direction.REVERSE);
+        lift.setDirection(DcMotorSimple.Direction.FORWARD);
         lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
-    /**
-     *
-     * Sets the starting position of the lift to the current position; Use sparingly
-     */
     public void reset() {
         lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         goingTo = POS_DOWN;
         manual = false;
-        lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
-    /**
-     *
-     * @param manual Whether the lift should move manually or not <br>
-     *               true - move by controller <br>
-     *               false - move by setting position
-     */
     public void setManual(boolean manual) {
         this.manual = manual;
     }
 
-    /**
-     *
-     * @param increment The increment that the lift should go to <br>
-     *                  0 - Down <br>
-     *                  1 - Low pole <br>
-     *                  2 - Medium pole <br>
-     *                  3 - High pole <br>
-     */
     public void setGoingTo(int increment) {
         switch (increment) {
             case 0:
@@ -69,10 +64,6 @@ public class Lift {
         }
     }
 
-    public void setGoingToSpecific(int goingTo) {
-        this.goingTo = goingTo;
-    }
-
     double calculatePowerManual(double stickVal) {
         if(Math.abs(stickVal) > 0.1) {
             return -stickVal * 0.7;
@@ -84,29 +75,36 @@ public class Lift {
     double calculatePowerAuto() {
         if (Math.abs(goingTo - lift.getCurrentPosition()) < 20) {
             return 0.1;
-        } else if (Math.abs(goingTo - lift.getCurrentPosition()) < 100) {
-            if (goingTo < lift.getCurrentPosition()) {
-                return -0.3;
-            } else {
-                return 0.3;
-            }
         } else {
             // active lift motion
             // note: might continue without stopping if ping gets too high
             if (goingTo < lift.getCurrentPosition()) {
-                return -0.8;
+                return -0.5;
             } else {
-                return 0.9;
+                return 0.5;
             }
         }
     }
 
+    public double seePID() {
+        return pid.calculate(goingTo, lift.getCurrentPosition());
+    }
+
     public void update(double stickVal) {
+        pid.Kp = p;
+        pid.Ki = i;
+        pid.Kd = d;
+
         if (manual) {
             lift.setPower(calculatePowerManual(stickVal));
             goingTo = lift.getCurrentPosition();
         } else {
             lift.setPower(calculatePowerAuto());
         }
+
+        telemetry.addData("targetPosition", goingTo);
+        telemetry.addData("currentPosition", lift.getCurrentPosition());
+        telemetry.addData("error", goingTo - lift.getCurrentPosition());
+        telemetry.update();
     }
 }

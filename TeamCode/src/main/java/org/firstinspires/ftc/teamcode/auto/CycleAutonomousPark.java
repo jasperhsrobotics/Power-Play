@@ -60,6 +60,7 @@ public class CycleAutonomousPark extends LinearOpMode {
         lift.setManual(false);
         lift.reset();
 
+
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
@@ -97,11 +98,15 @@ public class CycleAutonomousPark extends LinearOpMode {
                 .addDisplacementMarker(() -> {
                     lift.setGoingTo(1);
                 })
-                .lineTo(new Vector2d(-34, 52))
-                .turn(Math.toRadians(-90))
-                .strafeTo(new Vector2d(-34, 22))
+                .lineToLinearHeading(new Pose2d(-34, 22, Math.toRadians(-180)))
+                //.lineTo(new Vector2d(-34, 52))
+                //.turn(Math.toRadians(-90))
+                //.strafeTo(new Vector2d(-34, 22))
+                .strafeLeft(15)
+                .strafeRight(15)
                 .forward(7)
                 .waitSeconds(0.1)
+                // Drops preset cone
                 .addDisplacementMarker(() -> {
                     claw.setGoingTo(1);
                 })
@@ -113,6 +118,7 @@ public class CycleAutonomousPark extends LinearOpMode {
 
                 // Get Cone 1
                 .addDisplacementMarker(() -> {
+                    // open claw
                     claw.setGoingTo(1);
                 })
                 .lineTo(new Vector2d(-63.8, 12))
@@ -120,14 +126,15 @@ public class CycleAutonomousPark extends LinearOpMode {
                 .addDisplacementMarker(() -> {
                     claw.setGoingTo(0);
                 })
-                .waitSeconds(0.7)
+                .waitSeconds(0.4)
                 .addDisplacementMarker(() -> {
                     lift.setGoingTo(3);
                 })
                 .waitSeconds(0.5)
                 // Drop first cone
                 .lineTo(new Vector2d(-13, 12))
-                .turn(Math.toRadians(45))
+//                .turn(Math.toRadians(45))
+                .lineToLinearHeading(new Pose2d(-13, 12, Math.toRadians(225)))
                 .lineTo(new Vector2d(-18, 5))
                 .addDisplacementMarker(() -> {
                     claw.setGoingTo(1);
@@ -145,7 +152,7 @@ public class CycleAutonomousPark extends LinearOpMode {
                 .addDisplacementMarker(() -> {
                     claw.setGoingTo(0);
                 })
-                .waitSeconds(0.7)
+                .waitSeconds(1)
                 .addDisplacementMarker(() -> {
                     lift.setGoingTo(3);
                 })
@@ -169,7 +176,11 @@ public class CycleAutonomousPark extends LinearOpMode {
 
                 .build();
 
-        TrajectorySequence moveForward = drive.trajectorySequenceBuilder(new Pose2d(-34, 62, Math.toRadians(270)))
+        TrajectorySequence moveForward = drive.trajectorySequenceBuilder(ree.end())
+                .forward(24)
+                .build();
+
+        TrajectorySequence moveForward2 = drive.trajectorySequenceBuilder(moveForward.end())
                 .forward(24)
                 .build();
 
@@ -214,6 +225,8 @@ public class CycleAutonomousPark extends LinearOpMode {
 
             }
 
+            claw.setGoingTo(0);
+            claw.update();
             telemetry.update();
             sleep(20);
         }
@@ -237,6 +250,7 @@ public class CycleAutonomousPark extends LinearOpMode {
 
         drive.followTrajectorySequenceAsync(ree);
 
+
         while (opModeIsActive()) {
             drive.update();
             lift.update(0);
@@ -252,7 +266,7 @@ public class CycleAutonomousPark extends LinearOpMode {
             drive.followTrajectorySequence(moveForward);
         } else {
             drive.followTrajectorySequence(moveForward);
-            drive.followTrajectorySequence(moveForward);
+            drive.followTrajectorySequence(moveForward2);
         }
 
 //        /* You wouldn't have this in your autonomous, this is just to prevent the sample from ending */

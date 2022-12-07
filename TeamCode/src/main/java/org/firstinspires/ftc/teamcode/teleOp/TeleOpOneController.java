@@ -12,8 +12,8 @@ import org.firstinspires.ftc.teamcode.subsystem.Claw;
 import org.firstinspires.ftc.teamcode.subsystem.Lift;
 import org.firstinspires.ftc.teamcode.subsystem.LiftPID;
 
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="TeleOp Two Controller")
-public class TeleOpTwoController extends OpMode {
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="TeleOp One Controller")
+public class TeleOpOneController extends OpMode {
     Lift lift;
     Chassis chassis;
     Claw claw;
@@ -27,26 +27,26 @@ public class TeleOpTwoController extends OpMode {
 
     @Override
     public void loop() {
-        if (gamepad2.dpad_up) {
+        if (gamepad1.dpad_up) {
             lift.setManual(true);
-        } else if (gamepad2.dpad_down) {
+        } else if (gamepad1.dpad_down) {
             lift.setManual(false);
         }
 
-        if (gamepad2.a) {
+        if (gamepad1.a) {
             lift.setGoingTo(0);
-        } else if (gamepad2.b) {
+        } else if (gamepad1.b) {
             lift.setGoingTo(1);
-        } else if (gamepad2.x) {
+        } else if (gamepad1.x) {
             lift.setGoingTo(2);
-        } else if (gamepad2.y) {
+        } else if (gamepad1.y) {
             lift.setGoingTo(3);
         }
 
         // 0 is inner
-        if(gamepad2.dpad_left) {
+        if(gamepad1.dpad_right) {
             claw.setGoingTo(0);
-        } else if (gamepad2.dpad_right) {
+        } else if (gamepad1.dpad_left) {
             claw.setGoingTo(1);
         }
 

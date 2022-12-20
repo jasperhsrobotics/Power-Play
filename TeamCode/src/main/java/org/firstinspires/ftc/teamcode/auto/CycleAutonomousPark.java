@@ -3,8 +3,10 @@ package org.firstinspires.ftc.teamcode.auto;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.path.QuinticSpline;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
+import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -93,84 +95,118 @@ public class CycleAutonomousPark extends LinearOpMode {
         finished = false;
         TrajectorySequence ree = drive.trajectorySequenceBuilder(new Pose2d(-34, 62, Math.toRadians(270)))
                 .waitSeconds(0.5)
-                // Preload
+
+                /*
+                    Drops the preload cone
+                */
                 .lineTo(new Vector2d(-34, 60))
-                .addDisplacementMarker(() -> {
+                .addTemporalMarker(() -> {
                     lift.setGoingTo(1);
                 })
-                .lineToLinearHeading(new Pose2d(-34, 22, Math.toRadians(-180)))
-                //.lineTo(new Vector2d(-34, 52))
-                //.turn(Math.toRadians(-90))
-                //.strafeTo(new Vector2d(-34, 22))
-                .strafeLeft(15)
-                .strafeRight(15)
-                .forward(7)
-                .waitSeconds(0.1)
-                // Drops preset cone
-                .addDisplacementMarker(() -> {
-                    claw.setGoingTo(1);
-                })
-                .waitSeconds(0.1)
-                .addDisplacementMarker(() -> {
-                    lift.setGoingToSpecific(480);
-                })
-                .strafeTo(new Vector2d(-34, 12))
 
-                // Get Cone 1
-                .addDisplacementMarker(() -> {
-                    // open claw
+                // used to be (-38, 22)
+                .splineToSplineHeading(new Pose2d(-37, 22, Math.toRadians(-180)), 80)
+                .waitSeconds(0.1)
+                .addTemporalMarker(() -> {
                     claw.setGoingTo(1);
                 })
-                .lineTo(new Vector2d(-63.8, 12))
+                .waitSeconds(0.1)
+                .addTemporalMarker(() -> {
+                    // was 495
+                    lift.setGoingToSpecific(600);
+                })
+                //.strafeTo(new Vector2d(-34, 12))
+
+                /*
+                    Gets cone 1
+                */
+                .addTemporalMarker(() -> {
+                    claw.setGoingTo(1);
+                })
+                .setTangent(-70)
+                .splineToConstantHeading(new Vector2d(-34, 18), 0)
+                .setTangent(Math.toRadians(-70))
+                .splineToConstantHeading(new Vector2d(-60, 12), 0)
                 .waitSeconds(0.2)
-                .addDisplacementMarker(() -> {
+                .addTemporalMarker(() -> {
                     claw.setGoingTo(0);
                 })
                 .waitSeconds(0.4)
-                .addDisplacementMarker(() -> {
+                .addTemporalMarker(() -> {
                     lift.setGoingTo(3);
                 })
                 .waitSeconds(0.5)
-                // Drop first cone
-                .lineTo(new Vector2d(-13, 12))
-//                .turn(Math.toRadians(45))
-                .lineToLinearHeading(new Pose2d(-13, 12, Math.toRadians(225)))
-                .lineTo(new Vector2d(-18, 5))
-                .addDisplacementMarker(() -> {
-                    claw.setGoingTo(1);
-                })
-                .forward(-5)
-                .turn(Math.toRadians(-45))
 
-                // Get Cone 2
-                .addDisplacementMarker(() -> {
+                /*
+                    Drops cone 1
+                */
+                .setTangent(0)
+                .splineToSplineHeading(new Pose2d(-30, 7.21, -45), 0)
+                .waitSeconds(0.5)
+                .addTemporalMarker(() -> {
                     claw.setGoingTo(1);
-                    lift.setGoingToSpecific(450);
                 })
-                .lineTo(new Vector2d(-63.8, 12))
+                .waitSeconds(0.5)
+                .addTemporalMarker(() -> {
+                    lift.setGoingToSpecific(470);
+                })
+
+                /*
+                    Gets cone 2
+                */
+                .lineToSplineHeading(new Pose2d(-34, 18, 180))
                 .waitSeconds(0.2)
-                .addDisplacementMarker(() -> {
+                .addTemporalMarker(() -> {
                     claw.setGoingTo(0);
                 })
+                .waitSeconds(30)
+
+                /*.lineToLinearHeading(new Pose2d(-18, 11, Math.toRadians(270)))
+                // -18 5
+                .lineTo(new Vector2d(-18, 3))
                 .waitSeconds(1)
-                .addDisplacementMarker(() -> {
+                .addTemporalMarker(() -> {
+                    claw.setGoingTo(1);
+                })
+                .lineTo(new Vector2d(-18, 11))
+
+                /*
+                    Gets cone 2
+                */
+                .addTemporalMarker(() -> {
+                    // open claw
+                    claw.setGoingTo(1);
+                    lift.setGoingToSpecific(470);
+                })
+                .lineToLinearHeading(new Pose2d(-63.8, 12, Math.toRadians(180)))
+                .waitSeconds(0.2)
+                .addTemporalMarker(() -> {
+                    claw.setGoingTo(0);
+                })
+                .waitSeconds(0.4)
+                .addTemporalMarker(() -> {
                     lift.setGoingTo(3);
                 })
-                .waitSeconds(0.5)
+                .waitSeconds(0.3)
 
-                // Drop second cone
-                .lineTo(new Vector2d(-13, 12))
-                .turn(Math.toRadians(45))
+
+
+
+                /*
+                    Drops cone 2
+                */
+                .lineToLinearHeading(new Pose2d(-13, 12, Math.toRadians(225)))
                 .lineTo(new Vector2d(-18, 5))
-                .addDisplacementMarker(() -> {
+                .addTemporalMarker(() -> {
                     claw.setGoingTo(1);
                 })
                 .forward(-5)
                 .turn(Math.toRadians(-45))
 
-                .strafeRight(28)
-
-                .addDisplacementMarker(() -> {
+                /*
+                    Ends Program
+                */
+                .addTemporalMarker(() -> {
                     finished = true;
                 })
 
@@ -183,7 +219,6 @@ public class CycleAutonomousPark extends LinearOpMode {
         TrajectorySequence moveForward2 = drive.trajectorySequenceBuilder(moveForward.end())
                 .forward(24)
                 .build();
-
 
         while (!isStarted() && !isStopRequested()) {
             ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
@@ -261,7 +296,7 @@ public class CycleAutonomousPark extends LinearOpMode {
 
         /* Actually do something useful */
         if (tagOfInterest == null || tagOfInterest.id == LEFT) {
-
+            drive.followTrajectorySequence(moveForward);
         } else if (tagOfInterest.id == MIDDLE) {
             drive.followTrajectorySequence(moveForward);
         } else {

@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.auto;
 
+import androidx.annotation.NonNull;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -99,7 +101,17 @@ public class CycleAutonomousPark extends LinearOpMode {
                 /*
                     Drops the preload cone
                 */
-                .lineTo(new Vector2d(-34, 60))
+                .setVelConstraint(new TrajectoryVelocityConstraint() {
+                    @Override
+                    public double get(double v, @NonNull Pose2d pose2d, @NonNull Pose2d pose2d1, @NonNull Pose2d pose2d2) {
+                        return 40;
+                    }
+                })
+                .forward(40)
+                .waitSeconds(0.2)
+                .back(20)
+                .waitSeconds(0.5)
+                .resetVelConstraint()
                 .addTemporalMarker(() -> {
                     lift.setGoingTo(1);
                 })
@@ -126,7 +138,8 @@ public class CycleAutonomousPark extends LinearOpMode {
                 .setTangent(-70)
                 .splineToConstantHeading(new Vector2d(-34, 18), 0)
                 .setTangent(Math.toRadians(-70))
-                .splineToConstantHeading(new Vector2d(-60, 12), 0)
+                // was -60, 12
+                .splineToConstantHeading(new Vector2d(-58, 12), 0)
                 .waitSeconds(0.2)
                 .addTemporalMarker(() -> {
                     claw.setGoingTo(0);
@@ -141,7 +154,8 @@ public class CycleAutonomousPark extends LinearOpMode {
                     Drops cone 1
                 */
                 .setTangent(0)
-                .splineToSplineHeading(new Pose2d(-30, 7.21, -45), 0)
+                .splineToSplineHeading(new Pose2d(-50, 12, -45), 0)
+                .splineToSplineHeading(new Pose2d(-26, 5, -45), 0)
                 .waitSeconds(0.5)
                 .addTemporalMarker(() -> {
                     claw.setGoingTo(1);

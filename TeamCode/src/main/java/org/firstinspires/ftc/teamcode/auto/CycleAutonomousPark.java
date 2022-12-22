@@ -168,7 +168,7 @@ public class CycleAutonomousPark extends LinearOpMode {
 
                 /*
                     Gets cone 2
-           gfihiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii9j       */
+                */
                 .splineToSplineHeading(new Pose2d(-58, 12, -180), 0)
 
                 /*

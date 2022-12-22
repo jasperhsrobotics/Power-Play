@@ -155,9 +155,10 @@ public class CycleAutonomousPark extends LinearOpMode {
                 */
                 .setTangent(0)
                 .splineToSplineHeading(new Pose2d(-50, 12, -45), 0)
-                .splineToSplineHeading(new Pose2d(-26, 5, -45), 0)
+                .splineToSplineHeading(new Pose2d(-24, 5, -45), 0)
                 .waitSeconds(0.5)
                 .addTemporalMarker(() -> {
+                    lift.setGoingTo(2);
                     claw.setGoingTo(1);
                 })
                 .waitSeconds(0.5)
@@ -167,55 +168,8 @@ public class CycleAutonomousPark extends LinearOpMode {
 
                 /*
                     Gets cone 2
-                */
-                .lineToSplineHeading(new Pose2d(-34, 18, 180))
-                .waitSeconds(0.2)
-                .addTemporalMarker(() -> {
-                    claw.setGoingTo(0);
-                })
-                .waitSeconds(30)
-
-                /*.lineToLinearHeading(new Pose2d(-18, 11, Math.toRadians(270)))
-                // -18 5
-                .lineTo(new Vector2d(-18, 3))
-                .waitSeconds(1)
-                .addTemporalMarker(() -> {
-                    claw.setGoingTo(1);
-                })
-                .lineTo(new Vector2d(-18, 11))
-
-                /*
-                    Gets cone 2
-                */
-                .addTemporalMarker(() -> {
-                    // open claw
-                    claw.setGoingTo(1);
-                    lift.setGoingToSpecific(470);
-                })
-                .lineToLinearHeading(new Pose2d(-63.8, 12, Math.toRadians(180)))
-                .waitSeconds(0.2)
-                .addTemporalMarker(() -> {
-                    claw.setGoingTo(0);
-                })
-                .waitSeconds(0.4)
-                .addTemporalMarker(() -> {
-                    lift.setGoingTo(3);
-                })
-                .waitSeconds(0.3)
-
-
-
-
-                /*
-                    Drops cone 2
-                */
-                .lineToLinearHeading(new Pose2d(-13, 12, Math.toRadians(225)))
-                .lineTo(new Vector2d(-18, 5))
-                .addTemporalMarker(() -> {
-                    claw.setGoingTo(1);
-                })
-                .forward(-5)
-                .turn(Math.toRadians(-45))
+           gfihiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii9j       */
+                .splineToSplineHeading(new Pose2d(-58, 12, -180), 0)
 
                 /*
                     Ends Program

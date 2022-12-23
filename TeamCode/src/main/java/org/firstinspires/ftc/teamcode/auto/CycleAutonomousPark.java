@@ -98,7 +98,7 @@ public class CycleAutonomousPark extends LinearOpMode {
         TrajectorySequence ree = drive.trajectorySequenceBuilder(new Pose2d(-34, 62, Math.toRadians(270)))
                 .waitSeconds(0.5)
                 .addTemporalMarker(() -> {
-                    lift.setGoingToSpecific(200);
+                    lift.setGoingToSpecific(100);
                 })
 
                 /*
@@ -156,12 +156,6 @@ public class CycleAutonomousPark extends LinearOpMode {
                 /*
                     Drops cone 1
                 */
-                .setVelConstraint(new TrajectoryVelocityConstraint() {
-                    @Override
-                    public double get(double v, @NonNull Pose2d pose2d, @NonNull Pose2d pose2d1, @NonNull Pose2d pose2d2) {
-                        return 30;
-                    }
-                })
                 .setTangent(0)
                 .splineToSplineHeading(new Pose2d(-50, 12, -45), 0)
                 .splineToSplineHeading(new Pose2d(-24, 5, -45), 0)
@@ -178,6 +172,7 @@ public class CycleAutonomousPark extends LinearOpMode {
                 /*
                     Gets cone 2
                 */
+                // doesnt entirely work yet, angle is wrong
                 .lineToSplineHeading(new Pose2d(-30, 12, -45))
 
                 /*
@@ -273,14 +268,14 @@ public class CycleAutonomousPark extends LinearOpMode {
         }
 
         /* Actually do something useful */
-        if (tagOfInterest == null || tagOfInterest.id == LEFT) {
-            drive.followTrajectorySequence(moveForward);
-        } else if (tagOfInterest.id == MIDDLE) {
-            drive.followTrajectorySequence(moveForward);
-        } else {
-            drive.followTrajectorySequence(moveForward);
-            drive.followTrajectorySequence(moveForward2);
-        }
+//        if (tagOfInterest == null || tagOfInterest.id == LEFT) {
+//            drive.followTrajectorySequence(moveForward);
+//        } else if (tagOfInterest.id == MIDDLE) {
+//            drive.followTrajectorySequence(moveForward);
+//        } else {
+//            drive.followTrajectorySequence(moveForward);
+//            drive.followTrajectorySequence(moveForward2);
+//        }
 
 //        /* You wouldn't have this in your autonomous, this is just to prevent the sample from ending */
 //        while (opModeIsActive()) {sleep(20);}

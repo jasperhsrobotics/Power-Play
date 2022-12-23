@@ -12,6 +12,8 @@ public class Lift {
     final int POS_MID = 3200;
     final int POS_HIGH = 4500;
 
+    final int OFFSET = 50;
+
     static int goingTo;
     static boolean manual;
 
@@ -70,6 +72,7 @@ public class Lift {
                 goingTo = POS_HIGH;
                 break;
         }
+        goingTo += OFFSET;
     }
 
     /**
@@ -98,6 +101,7 @@ public class Lift {
      * @return the calculated power
      */
     double calculatePowerAuto() {
+        // change when the lift is rebuilt
         if (Math.abs(goingTo - lift.getCurrentPosition()) < 20) {
             return 0.1;
         } else if (Math.abs(goingTo - lift.getCurrentPosition()) < 100) {

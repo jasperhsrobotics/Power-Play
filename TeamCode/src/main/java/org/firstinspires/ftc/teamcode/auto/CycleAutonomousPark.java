@@ -97,6 +97,9 @@ public class CycleAutonomousPark extends LinearOpMode {
         finished = false;
         TrajectorySequence ree = drive.trajectorySequenceBuilder(new Pose2d(-34, 62, Math.toRadians(270)))
                 .waitSeconds(0.5)
+                .addTemporalMarker(() -> {
+                    lift.setGoingToSpecific(200);
+                })
 
                 /*
                     Drops the preload cone
@@ -153,6 +156,12 @@ public class CycleAutonomousPark extends LinearOpMode {
                 /*
                     Drops cone 1
                 */
+                .setVelConstraint(new TrajectoryVelocityConstraint() {
+                    @Override
+                    public double get(double v, @NonNull Pose2d pose2d, @NonNull Pose2d pose2d1, @NonNull Pose2d pose2d2) {
+                        return 30;
+                    }
+                })
                 .setTangent(0)
                 .splineToSplineHeading(new Pose2d(-50, 12, -45), 0)
                 .splineToSplineHeading(new Pose2d(-24, 5, -45), 0)
@@ -169,7 +178,7 @@ public class CycleAutonomousPark extends LinearOpMode {
                 /*
                     Gets cone 2
                 */
-                .splineToSplineHeading(new Pose2d(-58, 12, -180), 0)
+                .lineToSplineHeading(new Pose2d(-30, 12, -45))
 
                 /*
                     Ends Program
@@ -230,6 +239,7 @@ public class CycleAutonomousPark extends LinearOpMode {
 
             claw.setGoingTo(0);
             claw.update();
+            telemetry.addLine("Claw closed");
             telemetry.update();
             sleep(20);
         }

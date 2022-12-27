@@ -128,7 +128,7 @@ public class CycleAutonomousPark extends LinearOpMode {
                 .waitSeconds(0.1)
                 .addTemporalMarker(() -> {
                     // was 495
-                    lift.setGoingToSpecific(600);
+                    lift.setGoingToSpecific(740);
                 })
                 //.strafeTo(new Vector2d(-34, 12))
 
@@ -142,7 +142,7 @@ public class CycleAutonomousPark extends LinearOpMode {
                 .splineToConstantHeading(new Vector2d(-34, 18), 0)
                 .setTangent(Math.toRadians(-70))
                 // was -60, 12
-                .splineToConstantHeading(new Vector2d(-58, 12), 0)
+                .splineToConstantHeading(new Vector2d(-58, 11), 0)
                 .waitSeconds(0.2)
                 .addTemporalMarker(() -> {
                     claw.setGoingTo(0);
@@ -157,8 +157,8 @@ public class CycleAutonomousPark extends LinearOpMode {
                     Drops cone 1
                 */
                 .setTangent(0)
-                .splineToSplineHeading(new Pose2d(-50, 12, -45), 0)
-                .splineToSplineHeading(new Pose2d(-24, 5, -45), 0)
+                .splineToSplineHeading(new Pose2d(-50, 12, Math.toRadians(-55)), 0)
+                .splineToSplineHeading(new Pose2d(-25.2, 5.2, Math.toRadians(-55)), 0)
                 .waitSeconds(0.5)
                 .addTemporalMarker(() -> {
                     lift.setGoingTo(2);
@@ -166,7 +166,7 @@ public class CycleAutonomousPark extends LinearOpMode {
                 })
                 .waitSeconds(0.5)
                 .addTemporalMarker(() -> {
-                    lift.setGoingToSpecific(470);
+                    lift.setGoingToSpecific(540);
                 })
 
                 /*
@@ -174,6 +174,34 @@ public class CycleAutonomousPark extends LinearOpMode {
                 */
                 // doesnt entirely work yet, angle is wrong
                 .lineToSplineHeading(new Pose2d(-30, 12, -45))
+                .lineToSplineHeading(new Pose2d(-30, 12.1, Math.toRadians(-180)))
+                .lineToConstantHeading(new Vector2d(-56.5, 8))
+                .waitSeconds(0.2)
+                .addTemporalMarker(() -> {
+                    claw.setGoingTo(0);
+                })
+                .waitSeconds(0.4)
+                .addTemporalMarker(() -> {
+                    lift.setGoingTo(3);
+                })
+                .waitSeconds(0.5)
+
+                /*
+                    Drops cone 2
+                */
+                .setTangent(0)
+                .lineToConstantHeading(new Vector2d(-54, 9))
+                .splineToConstantHeading(new Vector2d(-45, 9), 0)
+                .splineToSplineHeading(new Pose2d(-25.2, 5.2, -45), 0)
+                .waitSeconds(0.5)
+                .addTemporalMarker(() -> {
+                    lift.setGoingTo(2);
+                    claw.setGoingTo(1);
+                })
+                .waitSeconds(0.5)
+                .addTemporalMarker(() -> {
+                    lift.setGoingToSpecific(500);
+                })
 
                 /*
                     Ends Program

@@ -2,6 +2,10 @@ package org.firstinspires.ftc.teamcode.subsystem;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+/**
+ * Don't use this
+ */
+@Deprecated
 public class PID {
     public double Kp = 0;
     public double Ki = 0;

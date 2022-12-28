@@ -44,7 +44,7 @@ public class TeleOpTwoController extends OpMode {
         }
 
         // 0 is inner
-        if(gamepad2.dpad_left) {
+        if (gamepad2.dpad_left) {
             claw.setGoingTo(0);
         } else if (gamepad2.dpad_right) {
             claw.setGoingTo(1);

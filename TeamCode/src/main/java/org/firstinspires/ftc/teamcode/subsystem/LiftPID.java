@@ -8,6 +8,10 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
+/**
+ * Don't use this
+ */
+@Deprecated
 public class LiftPID {
     static private DcMotor lift;
 
@@ -44,7 +48,7 @@ public class LiftPID {
     }
 
     public void setManual(boolean manual) {
-        this.manual = manual;
+        Lift.manual = manual;
     }
 
     public void setGoingTo(int increment) {

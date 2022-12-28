@@ -11,12 +11,22 @@ public class Claw {
 
     public static double goingTo;
 
+    /**
+     * Initializes the Claw class
+     * @param hardwareMap The hardwareMap of your opmode
+     */
     public Claw(HardwareMap hardwareMap) {
         claw = hardwareMap.servo.get("claw");
         claw.setDirection(Servo.Direction.FORWARD);
         goingTo = POS_GRAB;
     }
 
+    /**
+     * Sets the target position
+     * @param increment The increment that the claw should go to<br>
+     *                  0 - Down <br>
+     *                  1 - Low pole <br>
+     */
     public void setGoingTo(int increment) {
         switch (increment) {
             case 0:
@@ -28,6 +38,9 @@ public class Claw {
         }
     }
 
+    /**
+     * Updates the claw power and position, call on each loop
+     */
     public void update() {
         claw.setPosition(goingTo);
     }

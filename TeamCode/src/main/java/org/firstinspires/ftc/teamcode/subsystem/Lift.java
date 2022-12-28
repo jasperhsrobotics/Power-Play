@@ -46,7 +46,7 @@ public class Lift {
      *               false - move by setting position
      */
     public void setManual(boolean manual) {
-        this.manual = manual;
+        Lift.manual = manual;
     }
 
     /**

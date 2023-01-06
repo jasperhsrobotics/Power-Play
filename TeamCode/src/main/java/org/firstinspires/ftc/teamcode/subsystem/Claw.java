@@ -6,8 +6,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class Claw {
     static private Servo claw;
 
-    final double POS_GRAB = 0.55;
-    final double POS_OPEN = 0.39;
+    final double POS_OPEN = 0.59;
+    final double POS_GRAB = 0.79;
 
     public static double goingTo;
 

@@ -110,27 +110,22 @@ public class CycleAutonomousPark extends LinearOpMode {
                         return 40;
                     }
                 })
-                .forward(40)
-                .waitSeconds(0.2)
-                .back(20)
-                .waitSeconds(0.5)
+                .forward(60)
                 .resetVelConstraint()
                 .addTemporalMarker(() -> {
                     lift.setGoingTo(1);
                 })
 
-                // used to be (-38, 22)
-                .splineToSplineHeading(new Pose2d(-37, 22, Math.toRadians(-180)), 80)
+                //.splineToSplineHeading(new Pose2d(-37, 22, Math.toRadians(-180)), 80)
+                .lineToSplineHeading(new Pose2d(-37.25, 22, Math.toRadians(-180)))
                 .waitSeconds(0.1)
                 .addTemporalMarker(() -> {
                     claw.setGoingTo(1);
                 })
                 .waitSeconds(0.1)
                 .addTemporalMarker(() -> {
-                    // was 495
                     lift.setGoingToSpecific(740);
                 })
-                //.strafeTo(new Vector2d(-34, 12))
 
                 /*
                     Gets cone 1
@@ -141,8 +136,7 @@ public class CycleAutonomousPark extends LinearOpMode {
                 .setTangent(-70)
                 .splineToConstantHeading(new Vector2d(-34, 18), 0)
                 .setTangent(Math.toRadians(-70))
-                // was -60, 12
-                .splineToConstantHeading(new Vector2d(-58, 11), 0)
+                .splineToConstantHeading(new Vector2d(-63, 11), Math.toRadians(180))
                 .waitSeconds(0.2)
                 .addTemporalMarker(() -> {
                     claw.setGoingTo(0);
@@ -158,7 +152,7 @@ public class CycleAutonomousPark extends LinearOpMode {
                 */
                 .setTangent(0)
                 .splineToSplineHeading(new Pose2d(-50, 12, Math.toRadians(-55)), 0)
-                .splineToSplineHeading(new Pose2d(-25.2, 5.2, Math.toRadians(-55)), 0)
+                .splineToSplineHeading(new Pose2d(-25.7, 4.5, Math.toRadians(-55)), 0)
                 .waitSeconds(0.5)
                 .addTemporalMarker(() -> {
                     lift.setGoingTo(2);
@@ -174,8 +168,9 @@ public class CycleAutonomousPark extends LinearOpMode {
                 */
                 // doesnt entirely work yet, angle is wrong
                 .lineToSplineHeading(new Pose2d(-30, 12, -45))
-                .lineToSplineHeading(new Pose2d(-30, 12.1, Math.toRadians(-180)))
-                .lineToConstantHeading(new Vector2d(-56.5, 8))
+                //.lineToSplineHeading(new Pose2d(-30, 11, Math.toRadians(-180)))
+                //.lineToConstantHeading(new Vector2d(-59, 11))
+                .lineToSplineHeading(new Pose2d(-59,11, Math.toRadians(-180)))
                 .waitSeconds(0.2)
                 .addTemporalMarker(() -> {
                     claw.setGoingTo(0);
@@ -192,7 +187,41 @@ public class CycleAutonomousPark extends LinearOpMode {
                 .setTangent(0)
                 .lineToConstantHeading(new Vector2d(-54, 9))
                 .splineToConstantHeading(new Vector2d(-45, 9), 0)
-                .splineToSplineHeading(new Pose2d(-25.2, 5.2, -45), 0)
+                .splineToSplineHeading(new Pose2d(-25.2, 4.8, -45), 0)
+                .waitSeconds(0.5)
+                .addTemporalMarker(() -> {
+                    lift.setGoingTo(2);
+                    claw.setGoingTo(1);
+                })
+                .waitSeconds(0.5)
+                .addTemporalMarker(() -> {
+                    lift.setGoingToSpecific(500);
+                })
+
+                /*
+                    Gets cone 3
+                */
+                // doesnt entirely work yet, angle is wrong
+                .lineToSplineHeading(new Pose2d(-30, 11, -45))
+                //.lineToSplineHeading(new Pose2d(-30, 11, Math.toRadians(-180)))
+                .lineToSplineHeading(new Pose2d(-59,11, Math.toRadians(-180)))
+                .waitSeconds(0.2)
+                .addTemporalMarker(() -> {
+                    claw.setGoingTo(0);
+                })
+                .waitSeconds(0.4)
+                .addTemporalMarker(() -> {
+                    lift.setGoingTo(3);
+                })
+                .waitSeconds(0.5)
+
+                /*
+                    Drops cone 3
+                */
+                .setTangent(0)
+                .lineToConstantHeading(new Vector2d(-54, 9))
+                .splineToConstantHeading(new Vector2d(-45, 9), 0)
+                .splineToSplineHeading(new Pose2d(-25.2, 4.8, -45), 0)
                 .waitSeconds(0.5)
                 .addTemporalMarker(() -> {
                     lift.setGoingTo(2);
@@ -212,11 +241,11 @@ public class CycleAutonomousPark extends LinearOpMode {
 
                 .build();
 
-        TrajectorySequence moveForward = drive.trajectorySequenceBuilder(ree.end())
-                .forward(24)
+        TrajectorySequence strafeRight = drive.trajectorySequenceBuilder(ree.end())
+                .lineToConstantHeading(new Vector2d(-60, 10))
                 .build();
 
-        TrajectorySequence moveForward2 = drive.trajectorySequenceBuilder(moveForward.end())
+        TrajectorySequence moveForward2 = drive.trajectorySequenceBuilder(ree.end())
                 .forward(24)
                 .build();
 
@@ -292,18 +321,16 @@ public class CycleAutonomousPark extends LinearOpMode {
             lift.update(0);
             claw.update();
             if (!drive.isBusy()) break;
-            //if (finished == true) break;
         }
 
         /* Actually do something useful */
-//        if (tagOfInterest == null || tagOfInterest.id == LEFT) {
-//            drive.followTrajectorySequence(moveForward);
-//        } else if (tagOfInterest.id == MIDDLE) {
-//            drive.followTrajectorySequence(moveForward);
-//        } else {
-//            drive.followTrajectorySequence(moveForward);
-//            drive.followTrajectorySequence(moveForward2);
-//        }
+        if (tagOfInterest == null || tagOfInterest.id == LEFT) {
+            drive.followTrajectorySequence(strafeRight);
+        } else if (tagOfInterest.id == MIDDLE) {
+
+        } else {
+            drive.followTrajectorySequence(strafeRight);
+        }
 
 //        /* You wouldn't have this in your autonomous, this is just to prevent the sample from ending */
 //        while (opModeIsActive()) {sleep(20);}

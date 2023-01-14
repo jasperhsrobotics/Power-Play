@@ -22,7 +22,7 @@ public class TeleOpTwoController extends OpMode {
     public void init() {
         claw = new Claw(hardwareMap);
         lift = new Lift(hardwareMap);
-        chassis = new Chassis(hardwareMap, 0.6);
+        chassis = new Chassis(hardwareMap, 0.8);
     }
 
     @Override
@@ -44,14 +44,14 @@ public class TeleOpTwoController extends OpMode {
         }
 
         // 0 is inner
-        if (gamepad2.dpad_left) {
+        if (gamepad2.left_bumper) {
             claw.setGoingTo(0);
-        } else if (gamepad2.dpad_right) {
+        } else if (gamepad2.right_bumper) {
             claw.setGoingTo(1);
         }
 
         lift.update(gamepad2.left_stick_y);
-        chassis.update(-gamepad1.left_stick_y, -gamepad1.left_stick_x * 1.1, gamepad1.right_stick_x);
+        chassis.update(-gamepad1.left_stick_y, -gamepad1.left_stick_x * 1.1, gamepad1.right_stick_x * 0.6);
         claw.update();
 
         //telemetry.addData("power:", lift.seePID());

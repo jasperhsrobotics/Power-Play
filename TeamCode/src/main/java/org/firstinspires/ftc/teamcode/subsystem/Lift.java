@@ -10,7 +10,7 @@ public class Lift {
     final int POS_DOWN = 15;
     final int POS_LOW = 1900;
     final int POS_MID = 3200;
-    final int POS_HIGH = 4500;
+    final int POS_HIGH = 4400;
 
     final int OFFSET = 50;
 
@@ -90,7 +90,7 @@ public class Lift {
      */
     double calculatePowerManual(double stickVal) {
         if(Math.abs(stickVal) > 0.1) {
-            return -stickVal * 0.7;
+            return -stickVal * 0.9;
         } else {
             return 0.01;
         }

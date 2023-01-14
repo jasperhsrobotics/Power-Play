@@ -12,6 +12,7 @@ import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityCons
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.drive.PoseStorage;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -117,9 +118,11 @@ public class CycleAutonomousPark extends LinearOpMode {
                 })
 
                 //.splineToSplineHeading(new Pose2d(-37, 22, Math.toRadians(-180)), 80)
-                .lineToSplineHeading(new Pose2d(-37.25, 22, Math.toRadians(-180)))
+                .lineToSplineHeading(new Pose2d(-36, 22, Math.toRadians(-180)))
+                .lineTo(new Vector2d(-37.5, 22))
                 .waitSeconds(0.1)
                 .addTemporalMarker(() -> {
+                    lift.setGoingToSpecific(1000);
                     claw.setGoingTo(1);
                 })
                 .waitSeconds(0.1)
@@ -136,7 +139,7 @@ public class CycleAutonomousPark extends LinearOpMode {
                 .setTangent(-70)
                 .splineToConstantHeading(new Vector2d(-34, 18), 0)
                 .setTangent(Math.toRadians(-70))
-                .splineToConstantHeading(new Vector2d(-63, 11), Math.toRadians(180))
+                .splineToConstantHeading(new Vector2d(-61, 11), Math.toRadians(180))
                 .waitSeconds(0.2)
                 .addTemporalMarker(() -> {
                     claw.setGoingTo(0);
@@ -152,25 +155,26 @@ public class CycleAutonomousPark extends LinearOpMode {
                 */
                 .setTangent(0)
                 .splineToSplineHeading(new Pose2d(-50, 12, Math.toRadians(-55)), 0)
-                .splineToSplineHeading(new Pose2d(-25.7, 4.5, Math.toRadians(-55)), 0)
+                .splineToSplineHeading(new Pose2d(-27.5, 4 , Math.toRadians(-55)), 0)
                 .waitSeconds(0.5)
                 .addTemporalMarker(() -> {
-                    lift.setGoingTo(2);
+                    //lift.setGoingTo(2);
                     claw.setGoingTo(1);
                 })
-                .waitSeconds(0.5)
-                .addTemporalMarker(() -> {
-                    lift.setGoingToSpecific(540);
-                })
+                .waitSeconds(0.2)
+
 
                 /*
                     Gets cone 2
                 */
                 // doesnt entirely work yet, angle is wrong
                 .lineToSplineHeading(new Pose2d(-30, 12, -45))
+                .addTemporalMarker(() -> {
+                    lift.setGoingToSpecific(540);
+                })
                 //.lineToSplineHeading(new Pose2d(-30, 11, Math.toRadians(-180)))
                 //.lineToConstantHeading(new Vector2d(-59, 11))
-                .lineToSplineHeading(new Pose2d(-59,11, Math.toRadians(-180)))
+                .lineToSplineHeading(new Pose2d(-56.5,11, Math.toRadians(-180)))
                 .waitSeconds(0.2)
                 .addTemporalMarker(() -> {
                     claw.setGoingTo(0);
@@ -187,24 +191,25 @@ public class CycleAutonomousPark extends LinearOpMode {
                 .setTangent(0)
                 .lineToConstantHeading(new Vector2d(-54, 9))
                 .splineToConstantHeading(new Vector2d(-45, 9), 0)
-                .splineToSplineHeading(new Pose2d(-25.2, 4.8, -45), 0)
+                .splineToSplineHeading(new Pose2d(-27.2, 4, -45), 0)
                 .waitSeconds(0.5)
                 .addTemporalMarker(() -> {
-                    lift.setGoingTo(2);
+                    //lift.setGoingTo(2);
                     claw.setGoingTo(1);
                 })
-                .waitSeconds(0.5)
-                .addTemporalMarker(() -> {
-                    lift.setGoingToSpecific(500);
-                })
+                .waitSeconds(0.2)
+
 
                 /*
                     Gets cone 3
                 */
                 // doesnt entirely work yet, angle is wrong
                 .lineToSplineHeading(new Pose2d(-30, 11, -45))
+                .addTemporalMarker(() -> {
+                    lift.setGoingToSpecific(500);
+                })
                 //.lineToSplineHeading(new Pose2d(-30, 11, Math.toRadians(-180)))
-                .lineToSplineHeading(new Pose2d(-59,11, Math.toRadians(-180)))
+                .lineToSplineHeading(new Pose2d(-57.5,11, Math.toRadians(-180)))
                 .waitSeconds(0.2)
                 .addTemporalMarker(() -> {
                     claw.setGoingTo(0);
@@ -221,16 +226,16 @@ public class CycleAutonomousPark extends LinearOpMode {
                 .setTangent(0)
                 .lineToConstantHeading(new Vector2d(-54, 9))
                 .splineToConstantHeading(new Vector2d(-45, 9), 0)
-                .splineToSplineHeading(new Pose2d(-25.2, 4.8, -45), 0)
+                .splineToSplineHeading(new Pose2d(-27.2, 4, -45), 0)
                 .waitSeconds(0.5)
                 .addTemporalMarker(() -> {
-                    lift.setGoingTo(2);
+                    //lift.setGoingTo(2);
                     claw.setGoingTo(1);
                 })
-                .waitSeconds(0.5)
-                .addTemporalMarker(() -> {
+                .waitSeconds(0.2)
+                /*.addTemporalMarker(() -> {
                     lift.setGoingToSpecific(500);
-                })
+                })*/
 
                 /*
                     Ends Program
@@ -320,6 +325,7 @@ public class CycleAutonomousPark extends LinearOpMode {
             drive.update();
             lift.update(0);
             claw.update();
+            PoseStorage.currentPose = drive.getPoseEstimate();
             if (!drive.isBusy()) break;
         }
 

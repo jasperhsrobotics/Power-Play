@@ -8,6 +8,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
+@Deprecated
+@Disabled
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="TeleOpOld Deprecated Two Controller")
 public class TeleOpOld extends OpMode {
     DcMotor frontLeft;

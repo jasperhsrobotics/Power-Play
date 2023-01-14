@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystem;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
@@ -40,6 +42,26 @@ public class Chassis {
         return powers;
     }
 
+    public void updateField(double y, double x, double rx) {
+        Pose2d poseEstimate = drive.getPoseEstimate();
+
+        Vector2d input = new Vector2d(
+                y * speed,
+                x * speed
+        ).rotated(-poseEstimate.getHeading());
+
+        drive.setWeightedDrivePower(
+                new Pose2d(
+                        input.getX(),
+                        input.getY(),
+                        rx
+                )
+        );
+
+        drive.update();
+        drive.updatePoseEstimate();
+    }
+
     /**
      * Updates the power of each motor
      * @param y The translational joystick value in the y-direction
@@ -49,5 +71,6 @@ public class Chassis {
     public void update(double y, double x, double rx) {
         double[] powers = calculatePower(y, x, rx);
         drive.setMotorPowers(powers[0], powers[1], powers[2], powers[3]);
+        drive.updatePoseEstimate();
     }
 }

@@ -167,6 +167,7 @@ public class CycleAutonomousPark extends LinearOpMode {
                 /*
                     Gets cone 2
                 */
+
                 // doesnt entirely work yet, angle is wrong
                 .lineToSplineHeading(new Pose2d(-30, 12, -45))
                 .addTemporalMarker(() -> {
@@ -226,7 +227,7 @@ public class CycleAutonomousPark extends LinearOpMode {
                 .setTangent(0)
                 .lineToConstantHeading(new Vector2d(-54, 9))
                 .splineToConstantHeading(new Vector2d(-45, 9), 0)
-                .splineToSplineHeading(new Pose2d(-27.2, 4, -45), 0)
+                .splineToSplineHeading(new Pose2d(-27.7, 4, -45), 0)
                 .waitSeconds(0.5)
                 .addTemporalMarker(() -> {
                     //lift.setGoingTo(2);
@@ -247,11 +248,11 @@ public class CycleAutonomousPark extends LinearOpMode {
                 .build();
 
         TrajectorySequence strafeRight = drive.trajectorySequenceBuilder(ree.end())
-                .lineToConstantHeading(new Vector2d(-60, 10))
+                .lineToSplineHeading(new Pose2d(-60, 10, Math.toRadians(270)))
                 .build();
 
-        TrajectorySequence moveForward2 = drive.trajectorySequenceBuilder(ree.end())
-                .forward(24)
+        TrajectorySequence strafeLeft = drive.trajectorySequenceBuilder(ree.end())
+                .lineToSplineHeading(new Pose2d(-10, 10, Math.toRadians(270)))
                 .build();
 
         while (!isStarted() && !isStopRequested()) {
@@ -331,7 +332,7 @@ public class CycleAutonomousPark extends LinearOpMode {
 
         /* Actually do something useful */
         if (tagOfInterest == null || tagOfInterest.id == LEFT) {
-            drive.followTrajectorySequence(strafeRight);
+            drive.followTrajectorySequence(strafeLeft);
         } else if (tagOfInterest.id == MIDDLE) {
 
         } else {

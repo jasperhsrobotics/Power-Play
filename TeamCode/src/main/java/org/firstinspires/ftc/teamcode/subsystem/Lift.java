@@ -90,7 +90,7 @@ public class Lift {
      */
     double calculatePowerManual(double stickVal) {
         if(Math.abs(stickVal) > 0.1) {
-            return -stickVal * 0.9;
+            return -stickVal;
         } else {
             return 0.01;
         }

@@ -153,7 +153,7 @@ public class LeftAutonomousPark extends LinearOpMode {
 
 
         /* Actually do something useful */
-        if (tagOfInterest == null || tagOfInterest.id == LEFT) {
+        if (tagOfInterest == null || tagOfInterest.id == RIGHT) {
             drive.followTrajectory(strafeL25);
             drive.followTrajectory(forward30C);
         } else if (tagOfInterest.id == MIDDLE) {

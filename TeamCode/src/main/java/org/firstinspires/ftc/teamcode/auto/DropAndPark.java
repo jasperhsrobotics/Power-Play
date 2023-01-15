@@ -27,7 +27,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import java.util.ArrayList;
 
 @Autonomous
-public class CycleAutonomousPark extends LinearOpMode {
+public class DropAndPark extends LinearOpMode {
     boolean finished = false;
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
@@ -111,135 +111,21 @@ public class CycleAutonomousPark extends LinearOpMode {
                         return 40;
                     }
                 })
-                .forward(56)
+                .addTemporalMarker(() -> {
+                    lift.setGoingTo(3);
+                })
+                .forward(55)
+                .turn(Math.toRadians(50))
+                .forward(5)
                 .resetVelConstraint()
-                .addTemporalMarker(() -> {
-                    lift.setGoingTo(1);
-                })
-
-                //.splineToSplineHeading(new Pose2d(-37, 22, Math.toRadians(-180)), 80)
-                .lineToSplineHeading(new Pose2d(-36, 23.5, Math.toRadians(-180)))
-                .lineTo(new Vector2d(-37.5, 23.5))
-                .waitSeconds(0.1)
-                .addTemporalMarker(() -> {
-                    lift.setGoingToSpecific(1000);
-                    claw.setGoingTo(1);
-                })
-                .waitSeconds(0.1)
-                .addTemporalMarker(() -> {
-                    lift.setGoingToSpecific(740);
-                })
-
-                /*
-                    Gets cone 1
-                */
+                .waitSeconds(0.5)
                 .addTemporalMarker(() -> {
                     claw.setGoingTo(1);
                 })
-                .setTangent(-70)
-                .splineToConstantHeading(new Vector2d(-34, 18), 0)
-                .setTangent(Math.toRadians(-70))
-                .splineToConstantHeading(new Vector2d(-61, 11), Math.toRadians(180))
-                .waitSeconds(0.2)
-                .addTemporalMarker(() -> {
-                    claw.setGoingTo(0);
-                })
-                .waitSeconds(0.4)
-                .addTemporalMarker(() -> {
-                    lift.setGoingTo(3);
-                })
                 .waitSeconds(0.5)
-
-                /*
-                    Drops cone 1
-                */
-                .setTangent(0)
-                .splineToSplineHeading(new Pose2d(-50, 12, Math.toRadians(-55)), 0)
-                .splineToSplineHeading(new Pose2d(-24, 5.5 , Math.toRadians(-55)), 0)
-                .waitSeconds(0.5)
-                .addTemporalMarker(() -> {
-                    //lift.setGoingTo(2);
-                    claw.setGoingTo(1);
-                })
-                .waitSeconds(0.2)
+                .back(7)
 
 
-                /*
-                    Gets cone 2
-                */
-
-                // doesnt entirely work yet, angle is wrong
-                .lineToSplineHeading(new Pose2d(-27, 12, -45))
-                .addTemporalMarker(() -> {
-                    lift.setGoingToSpecific(540);
-                })
-                //.lineToSplineHeading(new Pose2d(-30, 11, Math.toRadians(-180)))
-                //.lineToConstantHeading(new Vector2d(-59, 11))
-                .lineToSplineHeading(new Pose2d(-50,11, Math.toRadians(-180)))
-                .waitSeconds(0.2)
-                .addTemporalMarker(() -> {
-                    claw.setGoingTo(0);
-                })
-                .waitSeconds(0.4)
-                .addTemporalMarker(() -> {
-                    lift.setGoingTo(3);
-                })
-                .waitSeconds(0.5)
-
-                /*
-                    Drops cone 2
-                */
-                .setTangent(0)
-                .splineToConstantHeading(new Vector2d(-45, 11.5), 0)
-                .splineToSplineHeading(new Pose2d(-23, 4, -45), 0)
-                .waitSeconds(0.5)
-                .addTemporalMarker(() -> {
-                    //lift.setGoingTo(2);
-                    claw.setGoingTo(1);
-                })
-                .waitSeconds(0.2)
-
-
-//                /*
-//                    Gets cone 3
-//                */
-//                // doesnt entirely work yet, angle is wrong
-//                .lineToSplineHeading(new Pose2d(-30, 11, -45))
-//                .addTemporalMarker(() -> {
-//                    lift.setGoingToSpecific(500);
-//                })
-//                //.lineToSplineHeading(new Pose2d(-30, 11, Math.toRadians(-180)))
-//                .lineToSplineHeading(new Pose2d(-57.5,11, Math.toRadians(-180)))
-//                .waitSeconds(0.2)
-//                .addTemporalMarker(() -> {
-//                    claw.setGoingTo(0);
-//                })
-//                .waitSeconds(0.4)
-//                .addTemporalMarker(() -> {
-//                    lift.setGoingTo(3);
-//                })
-//                .waitSeconds(0.5)
-//
-//                /*
-//                    Drops cone 3
-//                */
-//                .setTangent(0)
-//                .lineToConstantHeading(new Vector2d(-54, 9))
-//                .splineToConstantHeading(new Vector2d(-45, 9), 0)
-//                .splineToSplineHeading(new Pose2d(-27.7, 4, -45), 0)
-//                .waitSeconds(0.5)
-//                .addTemporalMarker(() -> {
-//                    //lift.setGoingTo(2);
-//                    claw.setGoingTo(1);
-//                })
-//                .waitSeconds(0.2)
-//                /*.addTemporalMarker(() -> {
-//                    lift.setGoingToSpecific(500);
-//                })*/
-
-                /*
-                    Ends Program
-                */
                 .addTemporalMarker(() -> {
                     finished = true;
                 })
@@ -256,7 +142,7 @@ public class CycleAutonomousPark extends LinearOpMode {
 
         TrajectorySequence dontStrafe = drive.trajectorySequenceBuilder(ree.end())
                 .back(3)
-                .turn(Math.toRadians(-45))
+                .turn(Math.toRadians(-50))
                 .build();
 
         while (!isStarted() && !isStopRequested()) {

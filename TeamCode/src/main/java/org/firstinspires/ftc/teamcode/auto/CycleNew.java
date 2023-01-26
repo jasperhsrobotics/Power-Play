@@ -4,10 +4,6 @@ import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.acmerobotics.roadrunner.path.QuinticSpline;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
-import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -19,6 +15,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.subsystem.Claw;
 import org.firstinspires.ftc.teamcode.subsystem.Lift;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.teamcode.vision.AprilTagDetectionPipeline;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -97,7 +94,7 @@ public class CycleNew extends LinearOpMode {
 
         finished = false;
         TrajectorySequence ree = drive.trajectorySequenceBuilder(new Pose2d(-34, 62, Math.toRadians(270)))
-                .waitSeconds(0.5)
+                //.waitSeconds(0.5)
                 .addTemporalMarker(() -> {
                     lift.setGoingToSpecific(100);
                 })
@@ -108,55 +105,58 @@ public class CycleNew extends LinearOpMode {
                 .setVelConstraint(new TrajectoryVelocityConstraint() {
                     @Override
                     public double get(double v, @NonNull Pose2d pose2d, @NonNull Pose2d pose2d1, @NonNull Pose2d pose2d2) {
-                        return 40;
+                        return 30;
                     }
                 })
                 .addTemporalMarker(() -> {
                     lift.setGoingTo(3);
                 })
-                .forward(55)
-                .turn(Math.toRadians(50))
-                .forward(5)
+                /*.forward(55)
+                .turn(Math.toRadians(50))*/
+                .forward(30)
+                .lineToSplineHeading(new Pose2d(-32.7, 11.5, 175))
+                .forward(6)
                 .resetVelConstraint()
-                .waitSeconds(0.5)
+                .waitSeconds(0.4)
                 .addTemporalMarker(() -> {
                     claw.setGoingTo(1);
                 })
-                .waitSeconds(0.5)
-                .back(6)
+                //.waitSeconds(0.5)
+                .back(5)
 
                 // Getting Second Cone
                 .addTemporalMarker(() -> {
-                    lift.setGoingToSpecific(740);
+                    lift.setGoingToSpecific(690);
                 })
+                .turn(Math.toRadians(-85))
                 .lineToSplineHeading(new Pose2d(-50,11, Math.toRadians(-180)))
-                .forward(10)
+                .forward(10.5)
                 .addTemporalMarker(() -> {
                     claw.setGoingTo(0);
                 })
-                .waitSeconds(0.5)
+                .waitSeconds(0.2)
                 .addTemporalMarker(() -> {
                     lift.setGoingTo(3);
                 })
 
                 // Dropping Second Cone
-                .back(6)
-                .lineToSplineHeading(new Pose2d(-30, 11.5, 175))
-                .forward(7)
+                .back(9)
+                .lineToSplineHeading(new Pose2d(-32.7, 11.5, 175))
+                .forward(6)
 
                 .waitSeconds(0.5)
                 .addTemporalMarker(() -> {
                     claw.setGoingTo(1);
                 })
                 .waitSeconds(0.5)
-                .back(6)
+                .back(5)
 
                 // Getting Third Cone
                 .addTemporalMarker(() -> {
-                    lift.setGoingToSpecific(680);
+                    lift.setGoingToSpecific(540);
                 })
                 .lineToSplineHeading(new Pose2d(-50,11, Math.toRadians(-180)))
-                .forward(10)
+                .forward(10.5)
                 .addTemporalMarker(() -> {
                     claw.setGoingTo(0);
                 })
@@ -166,9 +166,9 @@ public class CycleNew extends LinearOpMode {
                 })
 
                 // Dropping third cone
-                .back(6)
-                .lineToSplineHeading(new Pose2d(-30, 11.5, 175))
-                .forward(7)
+                .back(9)
+                .lineToSplineHeading(new Pose2d(-32.7, 11.5, 175))
+                .forward(8)
 
                 .waitSeconds(0.5)
                 .addTemporalMarker(() -> {

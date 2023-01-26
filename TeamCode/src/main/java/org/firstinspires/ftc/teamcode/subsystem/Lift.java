@@ -10,7 +10,7 @@ public class Lift {
     final int POS_DOWN = 15;
     final int POS_LOW = 1900;
     final int POS_MID = 3200;
-    final int POS_HIGH = 4400;
+    final int POS_HIGH = 4100;
 
     final int OFFSET = 50;
 
@@ -35,7 +35,6 @@ public class Lift {
     public void reset() {
         lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         goingTo = POS_DOWN;
-        manual = false;
         lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
@@ -119,6 +118,10 @@ public class Lift {
                 return 0.9;
             }
         }
+    }
+
+    public int getPosition() {
+        return lift.getCurrentPosition();
     }
 
     /**

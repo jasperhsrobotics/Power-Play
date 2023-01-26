@@ -1,15 +1,13 @@
-package org.firstinspires.ftc.teamcode.auto;
+package org.firstinspires.ftc.teamcode.auto.old;
 
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.acmerobotics.roadrunner.path.QuinticSpline;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
-import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.drive.PoseStorage;
@@ -19,6 +17,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.subsystem.Claw;
 import org.firstinspires.ftc.teamcode.subsystem.Lift;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.teamcode.vision.AprilTagDetectionPipeline;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -26,6 +25,8 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
 
+@Disabled
+@Deprecated
 @Autonomous
 public class CycleAutonomousPark extends LinearOpMode {
     boolean finished = false;
@@ -168,10 +169,9 @@ public class CycleAutonomousPark extends LinearOpMode {
                     Gets cone 2
                 */
 
-                // doesnt entirely work yet, angle is wrong
                 .lineToSplineHeading(new Pose2d(-27, 12, -45))
                 .addTemporalMarker(() -> {
-                    lift.setGoingToSpecific(540);
+                    lift.setGoingToSpecific(435);
                 })
                 //.lineToSplineHeading(new Pose2d(-30, 11, Math.toRadians(-180)))
                 //.lineToConstantHeading(new Vector2d(-59, 11))
@@ -343,6 +343,7 @@ public class CycleAutonomousPark extends LinearOpMode {
             drive.followTrajectorySequence(strafeRight);
         }
 
+        PoseStorage.currentPose = drive.getPoseEstimate();
 //        /* You wouldn't have this in your autonomous, this is just to prevent the sample from ending */
 //        while (opModeIsActive()) {sleep(20);}
     }

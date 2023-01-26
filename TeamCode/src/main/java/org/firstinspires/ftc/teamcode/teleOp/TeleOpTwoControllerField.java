@@ -50,10 +50,14 @@ public class TeleOpTwoControllerField extends OpMode {
             claw.setGoingTo(1);
         }
 
+        if (gamepad1.y) {
+            chassis.resetHeading();
+        }
+
         lift.update(gamepad2.left_stick_y);
         chassis.updateField(-gamepad1.left_stick_y, -gamepad1.left_stick_x * 1.1, -gamepad1.right_stick_x * 0.6);
         claw.update();
 
-        //telemetry.addData("power:", lift.seePID());
+        telemetry.addData("power:", lift.getPosition());
     }
 }

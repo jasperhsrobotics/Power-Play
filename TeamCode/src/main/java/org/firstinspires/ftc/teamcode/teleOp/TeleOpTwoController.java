@@ -51,7 +51,7 @@ public class TeleOpTwoController extends OpMode {
         }
 
         lift.update(gamepad2.left_stick_y);
-        chassis.update(-gamepad1.left_stick_y, -gamepad1.left_stick_x * 1.1, gamepad1.right_stick_x * 0.6);
+        chassis.update(gamepad1.left_stick_y, -gamepad1.left_stick_x * 1.1, gamepad1.right_stick_x * 0.6);
         claw.update();
 
         //telemetry.addData("power:", lift.seePID());

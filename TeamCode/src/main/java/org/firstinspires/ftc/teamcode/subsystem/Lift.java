@@ -7,10 +7,10 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class Lift {
     static private DcMotor lift;
 
-    final int POS_DOWN = 15;
-    final int POS_LOW = 1900;
-    final int POS_MID = 3200;
-    final int POS_HIGH = 4100;
+    public static final int POS_DOWN = 15;
+    public static final int POS_LOW = 1900;
+    public static final int POS_MID = 3200;
+    public static final int POS_HIGH = 4100;
 
     final int OFFSET = 50;
 
@@ -19,6 +19,7 @@ public class Lift {
 
     /**
      * Initializes the Lift class
+     *
      * @param hardwareMap The hardwareMap of your OpMode
      */
     public Lift(HardwareMap hardwareMap) {
@@ -40,6 +41,7 @@ public class Lift {
 
     /**
      * Sets the mode of the lift
+     *
      * @param manual Whether the lift should move manually or not <br>
      *               true - move by controller <br>
      *               false - move by setting position
@@ -50,6 +52,7 @@ public class Lift {
 
     /**
      * Sets the target position of the lift to a preset position
+     *
      * @param increment The increment that the lift should go to <br>
      *                  0 - Down <br>
      *                  1 - Low pole <br>
@@ -76,6 +79,7 @@ public class Lift {
 
     /**
      * Sets the target position of the lift to a custom position; use sparingly
+     *
      * @param goingTo Sets the target to a specific position
      */
     public void setGoingToSpecific(int goingTo) {
@@ -84,11 +88,12 @@ public class Lift {
 
     /**
      * Calculates the power that should be applied to the lift in manual mode
+     *
      * @param stickVal value returned by the joystick <br>
      * @return the calculated power
      */
     double calculatePowerManual(double stickVal) {
-        if(Math.abs(stickVal) > 0.1) {
+        if (Math.abs(stickVal) > 0.1) {
             return -stickVal;
         } else {
             return 0.01;
@@ -97,6 +102,7 @@ public class Lift {
 
     /**
      * Calculates the power that should be applied to the lift in automatic mode
+     *
      * @return the calculated power
      */
     double calculatePowerAuto() {
@@ -126,6 +132,7 @@ public class Lift {
 
     /**
      * Updates the lift power and position, call on each loop
+     *
      * @param stickVal the current value of the stick that moves the lift if in manual mode
      */
     public void update(double stickVal) {

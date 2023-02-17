@@ -4,15 +4,16 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class Claw {
-    static private Servo claw;
+    private final Servo claw;
 
-    final double POS_OPEN = 0.59;
-    final double POS_GRAB = 0.79;
+    public static final double POS_OPEN = 0.59;
+    public static final double POS_GRAB = 0.79;
 
     public static double goingTo;
 
     /**
      * Initializes the Claw class
+     *
      * @param hardwareMap The hardwareMap of your opmode
      */
     public Claw(HardwareMap hardwareMap) {
@@ -23,6 +24,7 @@ public class Claw {
 
     /**
      * Sets the target position
+     *
      * @param increment The increment that the claw should go to<br>
      *                  0 - Down <br>
      *                  1 - Low pole <br>

@@ -1,24 +1,42 @@
 package org.firstinspires.ftc.teamcode.subsystem;
 
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
-public class Claw {
-    static private Servo claw;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
-    final double POS_OPEN = 0.59;
-    final double POS_GRAB = 0.79;
+public class Claw {
+    static private Servo clawLeft;
+    static private Servo clawRight;
+    private NormalizedColorSensor distanceSensor;
+
+    // left
+    final double POS_GRAB_ONE = 0.2;
+    final double POS_OPEN_ONE = 0.35;
+
+    // right
+    final double POS_GRAB_TWO = 0.6;
+    final double POS_OPEN_TWO = 0.7;
 
     public static double goingTo;
+    public static double goingToTwo;
 
     /**
      * Initializes the Claw class
      * @param hardwareMap The hardwareMap of your opmode
      */
     public Claw(HardwareMap hardwareMap) {
-        claw = hardwareMap.servo.get("claw");
-        claw.setDirection(Servo.Direction.FORWARD);
-        goingTo = POS_GRAB;
+        clawLeft = hardwareMap.servo.get("leftServo");
+        clawRight = hardwareMap.servo.get("rightServo");
+        distanceSensor = hardwareMap.get(NormalizedColorSensor.class, "colorSensor");
+
+        clawLeft.setDirection(Servo.Direction.FORWARD);
+        clawRight.setDirection(Servo.Direction.REVERSE);
+
+        goingTo = POS_GRAB_ONE;
+        goingToTwo = POS_GRAB_TWO;
     }
 
     /**
@@ -30,18 +48,25 @@ public class Claw {
     public void setGoingTo(int increment) {
         switch (increment) {
             case 0:
-                goingTo = POS_GRAB;
+                goingTo = POS_GRAB_ONE;
+                goingToTwo = POS_GRAB_TWO;
                 break;
             case 1:
-                goingTo = POS_OPEN;
+                goingTo = POS_OPEN_ONE;
+                goingToTwo = POS_OPEN_TWO;
                 break;
         }
+    }
+
+    public double distanceCentimeters() {
+        return ((DistanceSensor) distanceSensor).getDistance(DistanceUnit.CM);
     }
 
     /**
      * Updates the claw power and position, call on each loop
      */
     public void update() {
-        claw.setPosition(goingTo);
+        clawLeft.setPosition(goingTo);
+        clawRight.setPosition(goingToTwo);
     }
 }

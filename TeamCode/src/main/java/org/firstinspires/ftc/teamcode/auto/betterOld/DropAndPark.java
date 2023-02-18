@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.auto;
+package org.firstinspires.ftc.teamcode.auto.betterOld;
 
 import androidx.annotation.NonNull;
 
@@ -24,7 +24,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import java.util.ArrayList;
 
 @Autonomous
-public class CycleNew extends LinearOpMode {
+public class DropAndPark extends LinearOpMode {
     boolean finished = false;
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
@@ -94,7 +94,7 @@ public class CycleNew extends LinearOpMode {
 
         finished = false;
         TrajectorySequence ree = drive.trajectorySequenceBuilder(new Pose2d(-34, 62, Math.toRadians(270)))
-                //.waitSeconds(0.5)
+                .waitSeconds(0.5)
                 .addTemporalMarker(() -> {
                     lift.setGoingToSpecific(100);
                 })
@@ -105,77 +105,23 @@ public class CycleNew extends LinearOpMode {
                 .setVelConstraint(new TrajectoryVelocityConstraint() {
                     @Override
                     public double get(double v, @NonNull Pose2d pose2d, @NonNull Pose2d pose2d1, @NonNull Pose2d pose2d2) {
-                        return 30;
+                        return 40;
                     }
                 })
                 .addTemporalMarker(() -> {
                     lift.setGoingTo(3);
                 })
-                /*.forward(55)
-                .turn(Math.toRadians(50))*/
-                .forward(30)
-                .lineToSplineHeading(new Pose2d(-32.7, 11.5, 175))
-                .forward(6)
+                .forward(55)
+                .turn(Math.toRadians(50))
+                .forward(5)
                 .resetVelConstraint()
-                .waitSeconds(0.4)
-                .addTemporalMarker(() -> {
-                    claw.setGoingTo(1);
-                })
-                //.waitSeconds(0.5)
-                .back(5)
-
-                // Getting Second Cone
-                .addTemporalMarker(() -> {
-                    lift.setGoingToSpecific(690);
-                })
-                .turn(Math.toRadians(-85))
-                .lineToSplineHeading(new Pose2d(-50,11, Math.toRadians(-180)))
-                .forward(10.5)
-                .addTemporalMarker(() -> {
-                    claw.setGoingTo(0);
-                })
-                .waitSeconds(0.2)
-                .addTemporalMarker(() -> {
-                    lift.setGoingTo(3);
-                })
-
-                // Dropping Second Cone
-                .back(9)
-                .lineToSplineHeading(new Pose2d(-32.7, 11.5, 175))
-                .forward(6)
-
                 .waitSeconds(0.5)
                 .addTemporalMarker(() -> {
                     claw.setGoingTo(1);
                 })
                 .waitSeconds(0.5)
-                .back(5)
+                .back(7)
 
-                // Getting Third Cone
-                .addTemporalMarker(() -> {
-                    lift.setGoingToSpecific(540);
-                })
-                .lineToSplineHeading(new Pose2d(-50,11, Math.toRadians(-180)))
-                .forward(10.5)
-                .addTemporalMarker(() -> {
-                    claw.setGoingTo(0);
-                })
-                .waitSeconds(0.5)
-                .addTemporalMarker(() -> {
-                    lift.setGoingTo(3);
-                })
-
-                // Dropping third cone
-                .back(9)
-                .lineToSplineHeading(new Pose2d(-32.7, 11.5, 175))
-                .forward(8)
-
-                .waitSeconds(0.5)
-                .addTemporalMarker(() -> {
-                    claw.setGoingTo(1);
-                })
-                .waitSeconds(0.5)
-                .back(6)
 
                 .addTemporalMarker(() -> {
                     finished = true;
@@ -270,7 +216,6 @@ public class CycleNew extends LinearOpMode {
             PoseStorage.currentPose = drive.getPoseEstimate();
             if (!drive.isBusy()) break;
         }
-
 
         /* Actually do something useful */
         if (tagOfInterest == null || tagOfInterest.id == LEFT) {

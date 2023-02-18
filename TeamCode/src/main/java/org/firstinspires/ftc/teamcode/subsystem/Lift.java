@@ -7,12 +7,10 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class Lift {
     static private DcMotor lift;
 
-    final int POS_DOWN = 15;
-    final int POS_LOW = 1900;
-    final int POS_MID = 3200;
-    final int POS_HIGH = 4100;
-
-    final int OFFSET = 50;
+    final int POS_DOWN = 50;
+    final int POS_LOW = 1136;
+    final int POS_MID = 2183;
+    final int POS_HIGH = 3028;
 
     static int goingTo;
     static boolean manual;
@@ -27,6 +25,8 @@ public class Lift {
         lift.setDirection(DcMotorSimple.Direction.REVERSE);
         lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        this.reset();
     }
 
     /**
@@ -71,7 +71,6 @@ public class Lift {
                 goingTo = POS_HIGH;
                 break;
         }
-        goingTo += OFFSET;
     }
 
     /**
@@ -79,7 +78,7 @@ public class Lift {
      * @param goingTo Sets the target to a specific position
      */
     public void setGoingToSpecific(int goingTo) {
-        this.goingTo = goingTo;
+        Lift.goingTo = goingTo;
     }
 
     /**
@@ -88,8 +87,10 @@ public class Lift {
      * @return the calculated power
      */
     double calculatePowerManual(double stickVal) {
-        if(Math.abs(stickVal) > 0.1) {
+        if(Math.abs(stickVal) > 0.1 && lift.getCurrentPosition() >= POS_DOWN) {
             return -stickVal;
+        } else if (lift.getCurrentPosition() < POS_DOWN) {
+            return 0.2;
         } else {
             return 0.01;
         }
@@ -100,9 +101,13 @@ public class Lift {
      * @return the calculated power
      */
     double calculatePowerAuto() {
+        /*if (lift.getCurrentPosition() < 10 && goingTo == 0) {
+            return 0;
+        }*/
+
         // change when the lift is rebuilt
-        if (Math.abs(goingTo - lift.getCurrentPosition()) < 20) {
-            return 0.1;
+        if (Math.abs(goingTo - lift.getCurrentPosition()) < 15) {
+            return 0.01;
         } else if (Math.abs(goingTo - lift.getCurrentPosition()) < 100) {
             if (goingTo < lift.getCurrentPosition()) {
                 return -0.3;
@@ -129,6 +134,7 @@ public class Lift {
      * @param stickVal the current value of the stick that moves the lift if in manual mode
      */
     public void update(double stickVal) {
+        goingTo = Math.max(POS_DOWN, goingTo);
         if (manual) {
             lift.setPower(calculatePowerManual(stickVal));
             goingTo = lift.getCurrentPosition();

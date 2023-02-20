@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 /**
  * Don't use this
  */
+// hmm I think I will anyways
 @Deprecated
 public class PID {
     public double Kp = 0;
@@ -33,7 +34,7 @@ public class PID {
         double error = reference - current;
         double errorChange = error - lastError;
 
-        currentFilterEstimate = (a * previousFilterEstimate) + (1-a) * errorChange;
+        currentFilterEstimate = (a * previousFilterEstimate) + (1 - a) * errorChange;
         previousFilterEstimate = currentFilterEstimate;
 
         double derivative = currentFilterEstimate / timer.seconds();

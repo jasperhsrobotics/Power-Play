@@ -17,6 +17,7 @@ public class Lift {
 
     /**
      * Initializes the Lift class
+     *
      * @param hardwareMap The hardwareMap of your OpMode
      */
     public Lift(HardwareMap hardwareMap) {
@@ -40,6 +41,7 @@ public class Lift {
 
     /**
      * Sets the mode of the lift
+     *
      * @param manual Whether the lift should move manually or not <br>
      *               true - move by controller <br>
      *               false - move by setting position
@@ -50,6 +52,7 @@ public class Lift {
 
     /**
      * Sets the target position of the lift to a preset position
+     *
      * @param increment The increment that the lift should go to <br>
      *                  0 - Down <br>
      *                  1 - Low pole <br>
@@ -75,6 +78,7 @@ public class Lift {
 
     /**
      * Sets the target position of the lift to a custom position; use sparingly
+     *
      * @param goingTo Sets the target to a specific position
      */
     public void setGoingToSpecific(int goingTo) {
@@ -83,11 +87,12 @@ public class Lift {
 
     /**
      * Calculates the power that should be applied to the lift in manual mode
+     *
      * @param stickVal value returned by the joystick <br>
      * @return the calculated power
      */
     double calculatePowerManual(double stickVal) {
-        if(Math.abs(stickVal) > 0.1 && lift.getCurrentPosition() >= POS_DOWN) {
+        if (Math.abs(stickVal) > 0.1 && lift.getCurrentPosition() >= POS_DOWN) {
             return -stickVal;
         } else if (lift.getCurrentPosition() < POS_DOWN) {
             return 0.2;
@@ -98,6 +103,7 @@ public class Lift {
 
     /**
      * Calculates the power that should be applied to the lift in automatic mode
+     *
      * @return the calculated power
      */
     double calculatePowerAuto() {
@@ -131,6 +137,7 @@ public class Lift {
 
     /**
      * Updates the lift power and position, call on each loop
+     *
      * @param stickVal the current value of the stick that moves the lift if in manual mode
      */
     public void update(double stickVal) {

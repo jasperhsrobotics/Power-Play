@@ -26,7 +26,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import java.util.ArrayList;
 
 @Autonomous
-public class FancyCycle extends LinearOpMode {
+public class FancyCycleRight extends LinearOpMode {
     boolean finished = false;
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;

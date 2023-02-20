@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.checkerframework.checker.units.qual.C;
 import org.firstinspires.ftc.teamcode.subsystem.Chassis;
 import org.firstinspires.ftc.teamcode.subsystem.Claw;
 import org.firstinspires.ftc.teamcode.subsystem.Lift;
@@ -22,7 +23,7 @@ public class TeleOpTwoControllerField extends OpMode {
     public void init() {
         claw = new Claw(hardwareMap);
         lift = new Lift(hardwareMap);
-        chassis = new Chassis(hardwareMap, 0.7);
+        chassis = new Chassis(hardwareMap, 0.9);
     }
 
     @Override
@@ -43,6 +44,16 @@ public class TeleOpTwoControllerField extends OpMode {
             lift.setGoingTo(3);
         }
 
+        if (gamepad2.dpad_left) {
+            lift.reset();
+        }
+
+        if (gamepad1.left_bumper) {
+            chassis.speed = 0.3;
+        } else {
+            chassis.speed = 0.9;
+        }
+
         // 0 is inner
         if (gamepad2.left_bumper) {
             claw.setGoingTo(0);
@@ -51,13 +62,13 @@ public class TeleOpTwoControllerField extends OpMode {
         }
 
         if (gamepad1.y) {
-            chassis.resetHeading();
+            chassis = new Chassis(hardwareMap, 0.9);
         }
 
         lift.update(gamepad2.left_stick_y);
-        chassis.updateField(-gamepad1.left_stick_y, -gamepad1.left_stick_x * 1.1, -gamepad1.right_stick_x * 0.6);
+        chassis.updateField(gamepad1.left_stick_y, -gamepad1.left_stick_x * 1.1, -gamepad1.right_stick_x * 0.6);
         claw.update();
 
-        telemetry.addData("power:", lift.getPosition());
+        telemetry.addData("Lift Position:", lift.getPosition());
     }
 }

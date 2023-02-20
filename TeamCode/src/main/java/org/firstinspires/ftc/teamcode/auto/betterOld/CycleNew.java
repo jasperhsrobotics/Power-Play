@@ -1,9 +1,10 @@
-package org.firstinspires.ftc.teamcode.auto;
+package org.firstinspires.ftc.teamcode.auto.betterOld;
 
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -24,7 +25,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import java.util.ArrayList;
 
 @Autonomous
-public class DropAndPark extends LinearOpMode {
+public class CycleNew extends LinearOpMode {
     boolean finished = false;
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
@@ -90,11 +91,11 @@ public class DropAndPark extends LinearOpMode {
          * This REPLACES waitForStart!
          */
 
-        drive.setPoseEstimate(new Pose2d(-34, 62, Math.toRadians(270)));
+        drive.setPoseEstimate(new Pose2d(-30, 62, Math.toRadians(270)));
 
         finished = false;
-        TrajectorySequence ree = drive.trajectorySequenceBuilder(new Pose2d(-34, 62, Math.toRadians(270)))
-                .waitSeconds(0.5)
+        TrajectorySequence ree = drive.trajectorySequenceBuilder(new Pose2d(-30, 62, Math.toRadians(270)))
+                //.waitSeconds(0.5)
                 .addTemporalMarker(() -> {
                     lift.setGoingToSpecific(100);
                 })
@@ -102,26 +103,93 @@ public class DropAndPark extends LinearOpMode {
                 /*
                     Drops the preload cone
                 */
-                .setVelConstraint(new TrajectoryVelocityConstraint() {
+                /*.setVelConstraint(new TrajectoryVelocityConstraint() {
                     @Override
                     public double get(double v, @NonNull Pose2d pose2d, @NonNull Pose2d pose2d1, @NonNull Pose2d pose2d2) {
-                        return 40;
+                        return 30;
                     }
-                })
+                })*/
                 .addTemporalMarker(() -> {
                     lift.setGoingTo(3);
                 })
-                .forward(55)
-                .turn(Math.toRadians(50))
-                .forward(5)
+                /*.forward(55)
+                .turn(Math.toRadians(50))*/
+                .lineTo(new Vector2d(-34, 62))
+                .forward(30)
+                .lineToSplineHeading(new Pose2d(-32.7, 11.5, 175))
+                .setVelConstraint(new TrajectoryVelocityConstraint() {
+                    @Override
+                    public double get(double v, @NonNull Pose2d pose2d, @NonNull Pose2d pose2d1, @NonNull Pose2d pose2d2) {
+                        return 15;
+                    }
+                })
+                .forward(6)
+                .waitSeconds(0.4)
+                .addTemporalMarker(() -> {
+                    claw.setGoingTo(1);
+                })
+                .waitSeconds(0.5)
+                .back(5)
                 .resetVelConstraint()
+                // Getting Second Cone
+                .addTemporalMarker(() -> {
+                    lift.setGoingToSpecific(690);
+                })
+                .turn(Math.toRadians(-85))
+                .lineToSplineHeading(new Pose2d(-50,11, Math.toRadians(-180)))
+                .forward(10.5)
+                .addTemporalMarker(() -> {
+                    claw.setGoingTo(0);
+                })
+                .waitSeconds(0.2)
+                .addTemporalMarker(() -> {
+                    lift.setGoingTo(3);
+                })
+
+                // Dropping Second Cone
+                .back(9)
+                .lineToSplineHeading(new Pose2d(-32.7, 11.5, 175))
+
+                .setVelConstraint(new TrajectoryVelocityConstraint() {
+                    @Override
+                    public double get(double v, @NonNull Pose2d pose2d, @NonNull Pose2d pose2d1, @NonNull Pose2d pose2d2) {
+                        return 15;
+                    }
+                })
+                .forward(6.5)
                 .waitSeconds(0.5)
                 .addTemporalMarker(() -> {
                     claw.setGoingTo(1);
                 })
                 .waitSeconds(0.5)
-                .back(7)
+                .back(5)
+                .resetVelConstraint()
 
+                // Getting Third Cone
+                .addTemporalMarker(() -> {
+                    lift.setGoingToSpecific(530);
+                })
+                .lineToSplineHeading(new Pose2d(-50,11, Math.toRadians(-180)))
+                .forward(10.5)
+                .addTemporalMarker(() -> {
+                    claw.setGoingTo(0);
+                })
+                .waitSeconds(0.5)
+                .addTemporalMarker(() -> {
+                    lift.setGoingTo(3);
+                })
+
+                // Dropping third cone
+                .back(9)
+                .lineToSplineHeading(new Pose2d(-32.7, 11.5, 175))
+                .forward(8)
+
+                .waitSeconds(0.5)
+                .addTemporalMarker(() -> {
+                    claw.setGoingTo(1);
+                })
+                .waitSeconds(0.5)
+                .back(6)
 
                 .addTemporalMarker(() -> {
                     finished = true;
@@ -134,7 +202,7 @@ public class DropAndPark extends LinearOpMode {
                 .build();
 
         TrajectorySequence strafeLeft = drive.trajectorySequenceBuilder(ree.end())
-                .lineToSplineHeading(new Pose2d(-6, 10, Math.toRadians(270)))
+                .lineToSplineHeading(new Pose2d(-10, 10, Math.toRadians(270)))
                 .build();
 
         TrajectorySequence dontStrafe = drive.trajectorySequenceBuilder(ree.end())
@@ -216,6 +284,7 @@ public class DropAndPark extends LinearOpMode {
             PoseStorage.currentPose = drive.getPoseEstimate();
             if (!drive.isBusy()) break;
         }
+
 
         /* Actually do something useful */
         if (tagOfInterest == null || tagOfInterest.id == LEFT) {

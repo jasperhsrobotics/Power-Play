@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 public class Chassis {
     SampleMecanumDrive drive;
-    double speed;
+    public double speed;
 
     /**
      * Initializes the Chassis class
@@ -18,7 +18,7 @@ public class Chassis {
      */
     public Chassis(HardwareMap hardwareMap, double speed) {
         drive = new SampleMecanumDrive(hardwareMap);
-        drive.setPoseEstimate(PoseStorage.currentPose);
+        //drive.setPoseEstimate(PoseStorage.currentPose);
         this.speed = speed;
     }
 
@@ -46,10 +46,11 @@ public class Chassis {
 
     public void updateField(double y, double x, double rx) {
         Pose2d poseEstimate = drive.getPoseEstimate();
+
         Vector2d input = new Vector2d(
-                y * speed,
+                -y * speed,
                 x * speed
-        ).rotated(-poseEstimate.getHeading()).rotated(Math.toRadians(-180));
+        ).rotated(-poseEstimate.getHeading());
 
         drive.setWeightedDrivePower(
                 new Pose2d(
@@ -61,7 +62,6 @@ public class Chassis {
 
         drive.update();
         drive.updatePoseEstimate();
-        PoseStorage.currentPose = drive.getPoseEstimate();
     }
 
     public void resetHeading() {

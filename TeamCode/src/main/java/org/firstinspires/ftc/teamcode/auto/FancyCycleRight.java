@@ -26,7 +26,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import java.util.ArrayList;
 
 @Autonomous
-public class FancyCycle extends LinearOpMode {
+public class FancyCycleRight extends LinearOpMode {
     boolean finished = false;
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
@@ -92,10 +92,10 @@ public class FancyCycle extends LinearOpMode {
          * This REPLACES waitForStart!
          */
 
-        drive.setPoseEstimate(new Pose2d(-30, 62, Math.toRadians(270)));
+        drive.setPoseEstimate(new Pose2d(-39, 63, Math.toRadians(270)));
 
         finished = false;
-        TrajectorySequence ree = drive.trajectorySequenceBuilder(new Pose2d(-30, 62, Math.toRadians(270)))
+        TrajectorySequence ree = drive.trajectorySequenceBuilder(new Pose2d(-39, 63, Math.toRadians(270)))
                 //.waitSeconds(0.5)
                 .addTemporalMarker(() -> {
                     lift.setGoingToSpecific(100);
@@ -110,21 +110,22 @@ public class FancyCycle extends LinearOpMode {
                         return 30;
                     }
                 })*/
-                .addTemporalMarker(() -> {
-                    lift.setGoingTo(3);
-                })
                 /*.forward(55)
                 .turn(Math.toRadians(50))*/
                 .lineTo(new Vector2d(-34, 62))
-                .forward(30)
-                .lineToSplineHeading(new Pose2d(-32.7, 11.5, 175))
+                .forward(60)
+                .addTemporalMarker(() -> {
+                    lift.setGoingTo(3);
+                })
+                .back(10)
+                .lineToSplineHeading(new Pose2d(-33, 11.5, 175))
                 .setVelConstraint(new TrajectoryVelocityConstraint() {
                     @Override
                     public double get(double v, @NonNull Pose2d pose2d, @NonNull Pose2d pose2d1, @NonNull Pose2d pose2d2) {
                         return 15;
                     }
                 })
-                .forward(6)
+                .forward(6.5)
                 .waitSeconds(0.4)
                 .addTemporalMarker(() -> {
                     claw.setGoingTo(1);
@@ -138,7 +139,7 @@ public class FancyCycle extends LinearOpMode {
                     lift.setGoingToSpecific(480);
                 })
                 .turn(Math.toRadians(-85))
-                .lineToSplineHeading(new Pose2d(-50,10.5, Math.toRadians(-180)))
+                .lineToSplineHeading(new Pose2d(-50,9.5, Math.toRadians(-180)))
                 .addTemporalMarker(() -> {
                     ElapsedTime time = new ElapsedTime();
                     time.reset();
@@ -167,7 +168,7 @@ public class FancyCycle extends LinearOpMode {
 
                 // Dropping 2nd cone
                 //.back(9)
-                .lineToSplineHeading(new Pose2d(-32.7, 11.5, 175))
+                .lineToSplineHeading(new Pose2d(-35, 10.5, 175))
 
                 .setVelConstraint(new TrajectoryVelocityConstraint() {
                     @Override
@@ -175,7 +176,7 @@ public class FancyCycle extends LinearOpMode {
                         return 15;
                     }
                 })
-                .forward(8)
+                .forward(8.3)
                 .waitSeconds(0.5)
                 .addTemporalMarker(() -> {
                     claw.setGoingTo(1);
@@ -189,15 +190,19 @@ public class FancyCycle extends LinearOpMode {
                     lift.setGoingToSpecific(350);
                 })
                 .turn(Math.toRadians(-85))
-                .lineToSplineHeading(new Pose2d(-50,10.5, Math.toRadians(-180)))
+                .lineToSplineHeading(new Pose2d(-50,9.5, Math.toRadians(-180)))
                 .addTemporalMarker(() -> {
-                    while (claw.distanceCentimeters() > 3.1) {
+                    ElapsedTime time = new ElapsedTime();
+                    time.reset();
+                    time.startTime();
+                    while (claw.distanceCentimeters() > 3.1 || time.seconds() > 3) {
                         telemetry.addData("Distance: ", claw.distanceCentimeters());
                         telemetry.update();
                         drive.setWeightedDrivePower(new Pose2d(
                                 0.3, 0, 0
                         ));
                     }
+                    time.reset();
                     drive.setWeightedDrivePower(new Pose2d(
                             0, 0, 0
                     ));
@@ -213,7 +218,8 @@ public class FancyCycle extends LinearOpMode {
                 .waitSeconds(0.5)
 
                 // Dropping 3rd cone
-                .lineToSplineHeading(new Pose2d(-32.7, 11.5, 175))
+                //.back(9)
+                .lineToSplineHeading(new Pose2d(-35.7, 9.5, 175))
 
                 .setVelConstraint(new TrajectoryVelocityConstraint() {
                     @Override
@@ -221,7 +227,7 @@ public class FancyCycle extends LinearOpMode {
                         return 15;
                     }
                 })
-                .forward(8)
+                .forward(9.5)
                 .waitSeconds(0.5)
                 .addTemporalMarker(() -> {
                     claw.setGoingTo(1);

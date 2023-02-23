@@ -25,6 +25,7 @@ public class Claw {
 
     /**
      * Initializes the Claw class
+     *
      * @param hardwareMap The hardwareMap of your opmode
      */
     public Claw(HardwareMap hardwareMap) {
@@ -41,6 +42,7 @@ public class Claw {
 
     /**
      * Sets the target position
+     *
      * @param increment The increment that the claw should go to<br>
      *                  0 - Down <br>
      *                  1 - Low pole <br>

@@ -10,7 +10,7 @@ public class Lift {
     final int POS_DOWN = 50;
     final int POS_LOW = 1136;
     final int POS_MID = 2183;
-    final int POS_HIGH = 3028;
+    final int POS_HIGH = 2990;
 
     static int goingTo;
     static boolean manual;

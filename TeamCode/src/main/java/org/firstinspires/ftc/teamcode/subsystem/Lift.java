@@ -10,7 +10,7 @@ public class Lift {
     final int POS_DOWN = 50;
     final int POS_LOW = 1136;
     final int POS_MID = 2183;
-    final int POS_HIGH = 2990;
+    final int POS_HIGH = 3010;
 
     static int goingTo;
     static boolean manual;
@@ -26,8 +26,6 @@ public class Lift {
         lift.setDirection(DcMotorSimple.Direction.REVERSE);
         lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        this.reset();
     }
 
     /**

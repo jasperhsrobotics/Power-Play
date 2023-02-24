@@ -44,8 +44,8 @@ public class Claw {
      * Sets the target position
      *
      * @param increment The increment that the claw should go to<br>
-     *                  0 - Down <br>
-     *                  1 - Low pole <br>
+     *                  0 - Grab <br>
+     *                  1 - Open <br>
      */
     public void setGoingTo(int increment) {
         switch (increment) {

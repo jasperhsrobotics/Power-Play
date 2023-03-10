@@ -11,18 +11,21 @@ import org.firstinspires.ftc.teamcode.subsystem.Chassis;
 import org.firstinspires.ftc.teamcode.subsystem.Claw;
 import org.firstinspires.ftc.teamcode.subsystem.Lift;
 import org.firstinspires.ftc.teamcode.subsystem.LiftPID;
+import org.firstinspires.ftc.teamcode.subsystem.Pivot;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="TeleOp Two Controller")
 public class TeleOpTwoController extends OpMode {
     Lift lift;
     Chassis chassis;
     Claw claw;
+    Pivot pivot;
 
     @Override
     public void init() {
         claw = new Claw(hardwareMap);
         lift = new Lift(hardwareMap);
         chassis = new Chassis(hardwareMap, 0.8);
+        pivot = new Pivot(hardwareMap);
     }
 
     @Override
@@ -48,6 +51,14 @@ public class TeleOpTwoController extends OpMode {
             claw.setGoingTo(0);
         } else if (gamepad2.right_bumper) {
             claw.setGoingTo(1);
+        }
+
+        if (gamepad2.dpad_left) {
+            pivot.setGoingTo(0);
+        } else if (gamepad2.dpad_right) {
+            pivot.setGoingTo(1);
+        } else if (gamepad2.right_stick_button) {
+            pivot.setGoingTo(2);
         }
 
         lift.update(gamepad2.left_stick_y);

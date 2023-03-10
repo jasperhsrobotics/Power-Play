@@ -15,6 +15,7 @@ import org.firstinspires.ftc.teamcode.subsystem.Lift;
 import org.firstinspires.ftc.teamcode.subsystem.PID;
 import org.firstinspires.ftc.teamcode.vision.AprilTagDetectionPipeline;
 import org.firstinspires.ftc.teamcode.vision.ConeDetectionPipeline;
+import org.firstinspires.ftc.teamcode.vision.ConePolePipeline;
 import org.firstinspires.ftc.teamcode.vision.PoleDetectionPipeline;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -29,6 +30,7 @@ public class wtf extends LinearOpMode {
 
     private final ConeDetectionPipeline coneDetector = ConeDetectionPipeline.redConeDetector();
     private final PoleDetectionPipeline poleDetector = new PoleDetectionPipeline();
+    private ConePolePipeline conePolePipeline = new ConePolePipeline(telemetry);
 
     private final PID turnControl = new PID(0.001, 0, 0);
     public static double kP = 0.001;
@@ -56,9 +58,7 @@ public class wtf extends LinearOpMode {
         lift = new Lift(hardwareMap);
         claw = new Claw(hardwareMap);
 
-        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-
-        camera.setPipeline(coneDetector);
+        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"));
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
@@ -67,11 +67,10 @@ public class wtf extends LinearOpMode {
 
             @Override
             public void onError(int errorCode) {
-
             }
         });
         FtcDashboard.getInstance().startCameraStream(camera, 30.0);
-
+        camera.setPipeline(conePolePipeline);
 
         waitForStart();
         if (isStopRequested()) return;
@@ -90,14 +89,13 @@ public class wtf extends LinearOpMode {
 
             if (gp1.dpad_left && !prevGp1.dpad_left) coneAiming = !coneAiming;
             if (coneAiming && coneDetector.getDetected()) {
-                gp1.right_stick_x = (float) turnControl.calculate(0.0, coneDetector.error);
+                gp1.right_stick_x = (float) turnControl.calculate(0.0, conePolePipeline.coneError);
             }
 
             if (gp1.dpad_right && !prevGp1.dpad_right) poleAiming = !poleAiming;
             if (poleAiming && poleDetector.getDetected() && !coneAiming) {
-                gp1.right_stick_x = (float) turnControl.calculate(0.0, poleDetector.error);
+                gp1.right_stick_x = (float) turnControl.calculate(0.0, conePolePipeline.poleError);
             }
-
 
             telemetry.addData("rsx", gp1.right_stick_x);
 

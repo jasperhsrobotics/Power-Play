@@ -29,17 +29,17 @@ public class DistanceTest extends OpMode {
         claw = new Claw(hardwareMap);
         lift = new Lift(hardwareMap);
         chassis = new Chassis(hardwareMap, 0.2);
+        lift.setManual(false);
+        lift.setGoingToSpecific(585);
+        claw.setGoingTo(1);
     }
 
     @Override
     public void loop() {
         // 0 is inner
-        if (claw.distanceCentimeters() < 1.5) {
+        if (claw.distanceCentimeters() < 2.2) {
             claw.setGoingTo(0);
             gotCone = true;
-        } else {
-            claw.setGoingTo(1);
-            gotCone = false;
         }
 
         if (!gotCone) {
@@ -50,7 +50,7 @@ public class DistanceTest extends OpMode {
 
 
         claw.update();
-
-        telemetry.addData("power:", lift.getPosition());
+        lift.update(0);
+        telemetry.addData("distance:", claw.distanceCentimeters());
     }
 }

@@ -10,7 +10,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 public class Claw {
     static private Servo clawLeft;
     static private Servo clawRight;
-    private NormalizedColorSensor distanceSensor;
+    //private NormalizedColorSensor distanceSensor;
+    private DistanceSensor distanceSensor;
 
     // left
     final double POS_GRAB_ONE = 0.2;
@@ -31,7 +32,7 @@ public class Claw {
     public Claw(HardwareMap hardwareMap) {
         clawLeft = hardwareMap.servo.get("leftServo");
         clawRight = hardwareMap.servo.get("rightServo");
-        distanceSensor = hardwareMap.get(NormalizedColorSensor.class, "colorSensor");
+        distanceSensor = hardwareMap.get(DistanceSensor.class, "distanceSensor");
 
         clawLeft.setDirection(Servo.Direction.FORWARD);
         clawRight.setDirection(Servo.Direction.REVERSE);
@@ -61,7 +62,7 @@ public class Claw {
     }
 
     public double distanceCentimeters() {
-        return ((DistanceSensor) distanceSensor).getDistance(DistanceUnit.CM);
+        return distanceSensor.getDistance(DistanceUnit.CM);
     }
 
     /**

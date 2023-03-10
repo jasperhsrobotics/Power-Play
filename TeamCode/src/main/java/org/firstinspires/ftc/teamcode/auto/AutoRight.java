@@ -26,7 +26,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import java.util.ArrayList;
 
 @Autonomous
-public class FancyCycleLeftOld extends LinearOpMode {
+public class AutoRight extends LinearOpMode {
     boolean finished = false;
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
@@ -63,6 +63,7 @@ public class FancyCycleLeftOld extends LinearOpMode {
         lift = new Lift(hardwareMap);
         lift.setManual(false);
         lift.reset();
+        lift.setGoingTo(0);
 
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
@@ -92,50 +93,44 @@ public class FancyCycleLeftOld extends LinearOpMode {
          * This REPLACES waitForStart!
          */
 
-        drive.setPoseEstimate(new Pose2d(30, 62, Math.toRadians(270)));
+        drive.setPoseEstimate(new Pose2d(-39, 63, Math.toRadians(270)));
 
         finished = false;
-        TrajectorySequence ree = drive.trajectorySequenceBuilder(new Pose2d(30, 62, Math.toRadians(270)))
-                //.waitSeconds(0.5)
-                .addTemporalMarker(() -> {
-                    lift.setGoingToSpecific(100);
-                })
+        TrajectorySequence ree = drive.trajectorySequenceBuilder(new Pose2d(-39, 63, Math.toRadians(270)))
+                .waitSeconds(1)
 
-                /*
-                    Drops the preload cone
-                */
+                .addTemporalMarker(() -> {
+                    lift.setGoingTo(1);
+                })
+                .waitSeconds(0.5)
+
+                // Drop preload
+                .setTangent(Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(-10, 38), Math.toRadians(270))
                 .addTemporalMarker(() -> {
                     lift.setGoingTo(3);
                 })
-                .lineTo(new Vector2d(34, 62))
-                .forward(30)
-                .lineToSplineHeading(new Pose2d(32.7, 11.5, Math.toRadians(237)))
-                .setVelConstraint(new TrajectoryVelocityConstraint() {
-                    @Override
-                    public double get(double v, @NonNull Pose2d pose2d, @NonNull Pose2d pose2d1, @NonNull Pose2d pose2d2) {
-                        return 15;
-                    }
-                })
-                .forward(6)
-                .waitSeconds(0.4)
+                .splineToConstantHeading(new Vector2d(-10, 20), Math.toRadians(270))
+                .splineToConstantHeading(new Vector2d(-28, 11), Math.toRadians(270))
+                .waitSeconds(0.5)
                 .addTemporalMarker(() -> {
+                    lift.setGoingToSpecific(3000);
                     claw.setGoingTo(1);
                 })
-                .waitSeconds(0.5)
-                .back(5)
-                .resetVelConstraint()
 
-                // Getting Second Cone
+                // Get first cone
+                .waitSeconds(0.5)
+                .setTangent(Math.toRadians(90))
+                .splineToSplineHeading(new Pose2d(-52, 13, Math.toRadians(180)), Math.toRadians(180))
                 .addTemporalMarker(() -> {
-                    lift.setGoingToSpecific(480);
+                    lift.setGoingToSpecific(584);
                 })
-                .turn(Math.toRadians(85))
-                .lineToSplineHeading(new Pose2d(50,10.5, Math.toRadians(0)))
+                .waitSeconds(1)
                 .addTemporalMarker(() -> {
                     ElapsedTime time = new ElapsedTime();
                     time.reset();
                     time.startTime();
-                    while (claw.distanceCentimeters() > 3.1 || time.seconds() > 3) {
+                    while (claw.distanceCentimeters() > 2.3 && time.seconds() < 1.5) {
                         telemetry.addData("Distance: ", claw.distanceCentimeters());
                         telemetry.update();
                         drive.setWeightedDrivePower(new Pose2d(
@@ -147,86 +142,26 @@ public class FancyCycleLeftOld extends LinearOpMode {
                             0, 0, 0
                     ));
                     drive.setPoseEstimate(new Pose2d(
-                            62, 11, Math.toRadians(0)
+                            -67, 13, Math.toRadians(-180)
                     ));
                     claw.setGoingTo(0);
                 })
-                .waitSeconds(0.3)
+                .waitSeconds(1)
+                .addTemporalMarker(() -> {
+                    lift.setGoingTo(2);
+                })
+                .waitSeconds(0.5)
+
+                // Drop first cone
+                .setTangent(Math.toRadians(0))
+                .splineToSplineHeading(new Pose2d(-53, 13, Math.toRadians(180)), Math.toRadians(0))
                 .addTemporalMarker(() -> {
                     lift.setGoingTo(3);
                 })
-                .waitSeconds(0.5)
+                .splineToSplineHeading(new Pose2d(-28, 11, Math.toRadians(270)), Math.toRadians(270))
 
-                // Dropping 2nd cone
-                //.back(9)
-                .lineToSplineHeading(new Pose2d(32.7, 11.5, Math.toRadians(225)))
 
-                .setVelConstraint(new TrajectoryVelocityConstraint() {
-                    @Override
-                    public double get(double v, @NonNull Pose2d pose2d, @NonNull Pose2d pose2d1, @NonNull Pose2d pose2d2) {
-                        return 15;
-                    }
-                })
-                .forward(8)
-                .waitSeconds(0.5)
-                .addTemporalMarker(() -> {
-                    claw.setGoingTo(1);
-                })
-                .waitSeconds(0.5)
-                .back(7)
-                .resetVelConstraint()
-
-                // Getting Third Cone
-                .addTemporalMarker(() -> {
-                    lift.setGoingToSpecific(480);
-                })
-                .turn(Math.toRadians(85))
-                .lineToSplineHeading(new Pose2d(50,10.5, Math.toRadians(0)))
-                .addTemporalMarker(() -> {
-                    ElapsedTime time = new ElapsedTime();
-                    time.reset();
-                    time.startTime();
-                    while (claw.distanceCentimeters() > 3.1 || time.seconds() > 3) {
-                        telemetry.addData("Distance: ", claw.distanceCentimeters());
-                        telemetry.update();
-                        drive.setWeightedDrivePower(new Pose2d(
-                                0.3, 0, 0
-                        ));
-                    }
-                    time.reset();
-                    drive.setWeightedDrivePower(new Pose2d(
-                            0, 0, 0
-                    ));
-                    drive.setPoseEstimate(new Pose2d(
-                            62, 11, Math.toRadians(0)
-                    ));
-                    claw.setGoingTo(0);
-                })
-                .waitSeconds(0.3)
-                .addTemporalMarker(() -> {
-                    lift.setGoingTo(3);
-                })
-                .waitSeconds(0.5)
-
-                // Dropping 2nd cone
-                //.back(9)
-                .lineToSplineHeading(new Pose2d(32.7, 11.5, Math.toRadians(225)))
-
-                .setVelConstraint(new TrajectoryVelocityConstraint() {
-                    @Override
-                    public double get(double v, @NonNull Pose2d pose2d, @NonNull Pose2d pose2d1, @NonNull Pose2d pose2d2) {
-                        return 15;
-                    }
-                })
-                .forward(8)
-                .waitSeconds(0.5)
-                .addTemporalMarker(() -> {
-                    claw.setGoingTo(1);
-                })
-                .waitSeconds(0.5)
-                .back(7)
-                .resetVelConstraint()
-
+                .waitSeconds(20)
                 .addTemporalMarker(() -> {
                     finished = true;
                 })
@@ -234,11 +169,11 @@ public class FancyCycleLeftOld extends LinearOpMode {
                 .build();
 
         TrajectorySequence strafeRight = drive.trajectorySequenceBuilder(ree.end())
-                .lineToSplineHeading(new Pose2d(-60, 10, Math.toRadians(270)))
+                .lineToSplineHeading(new Pose2d(-60, 12, Math.toRadians(270)))
                 .build();
 
         TrajectorySequence strafeLeft = drive.trajectorySequenceBuilder(ree.end())
-                .lineToSplineHeading(new Pose2d(-10, 10, Math.toRadians(270)))
+                .lineToSplineHeading(new Pose2d(-12, 10, Math.toRadians(270)))
                 .build();
 
         TrajectorySequence dontStrafe = drive.trajectorySequenceBuilder(ree.end())
@@ -286,8 +221,7 @@ public class FancyCycleLeftOld extends LinearOpMode {
 
             }
 
-            claw.setGoingTo(0);
-            claw.update();
+            lift.update(0);
             telemetry.addLine("Claw closed");
             telemetry.update();
             sleep(20);
@@ -324,11 +258,11 @@ public class FancyCycleLeftOld extends LinearOpMode {
 
         /* Actually do something useful */
         if (tagOfInterest == null || tagOfInterest.id == LEFT) {
-            drive.followTrajectorySequence(strafeLeft);
+            //drive.followTrajectorySequence(strafeLeft);
         } else if (tagOfInterest.id == MIDDLE) {
-            drive.followTrajectorySequence(dontStrafe);
+            //drive.followTrajectorySequence(dontStrafe);
         } else {
-            drive.followTrajectorySequence(strafeRight);
+            //sdrive.followTrajectorySequence(strafeRight);
         }
 
 //        /* You wouldn't have this in your autonomous, this is just to prevent the sample from ending */

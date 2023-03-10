@@ -47,6 +47,7 @@ public class BackAndForth extends LinearOpMode {
         while (opModeIsActive() && !isStopRequested()) {
             drive.followTrajectory(trajectoryForward);
             drive.followTrajectory(trajectoryBackward);
+            telemetry.addData("Positions:", drive.getWheelPositions());
         }
     }
 }

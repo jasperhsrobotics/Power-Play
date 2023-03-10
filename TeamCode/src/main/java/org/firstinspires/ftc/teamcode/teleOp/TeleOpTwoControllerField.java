@@ -12,6 +12,9 @@ import org.firstinspires.ftc.teamcode.subsystem.Chassis;
 import org.firstinspires.ftc.teamcode.subsystem.Claw;
 import org.firstinspires.ftc.teamcode.subsystem.Lift;
 import org.firstinspires.ftc.teamcode.subsystem.LiftPID;
+import org.firstinspires.ftc.teamcode.subsystem.Pivot;
+
+import java.util.Arrays;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="TeleOp Two Controller Field")
 public class TeleOpTwoControllerField extends OpMode {
@@ -44,9 +47,9 @@ public class TeleOpTwoControllerField extends OpMode {
             lift.setGoingTo(3);
         }
 
-        if (gamepad2.dpad_left) {
-            lift.reset();
-        }
+//        if (gamepad2.dpad_left) {
+//            lift.reset();
+//        }
 
         if (gamepad1.left_bumper) {
             chassis.speed = 0.3;
@@ -68,7 +71,7 @@ public class TeleOpTwoControllerField extends OpMode {
         lift.update(gamepad2.left_stick_y);
         chassis.updateField(gamepad1.left_stick_y, -gamepad1.left_stick_x * 1.1, -gamepad1.right_stick_x * 0.6);
         claw.update();
-
         telemetry.addData("Lift Position:", lift.getPosition());
+        telemetry.addData("Encoders:", Arrays.toString(chassis.drive.getEncoderValues()));
     }
 }

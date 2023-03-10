@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.drive.PoseStorage;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 public class Chassis {
-    SampleMecanumDrive drive;
+    public SampleMecanumDrive drive;
     public double speed;
 
     /**

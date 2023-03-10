@@ -316,4 +316,8 @@ public class SampleMecanumDrive extends MecanumDrive {
     public static TrajectoryAccelerationConstraint getAccelerationConstraint(double maxAccel) {
         return new ProfileAccelerationConstraint(maxAccel);
     }
+
+    public int[] getEncoderValues() {
+        return new int[]{leftFront.getCurrentPosition(), leftRear.getCurrentPosition(), rightFront.getCurrentPosition(), rightRear.getCurrentPosition()};
+    }
 }

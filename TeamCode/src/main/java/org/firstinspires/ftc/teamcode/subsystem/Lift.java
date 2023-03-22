@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class Lift {
     static private DcMotor lift;
 
-    final int POS_DOWN = 125;
+    final int POS_DOWN = 20;
     final int POS_LOW = 1136;
     final int POS_MID = 2183;
     final int POS_HIGH = 3300;

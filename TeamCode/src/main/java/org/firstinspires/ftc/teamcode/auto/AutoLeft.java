@@ -26,7 +26,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import java.util.ArrayList;
 
 @Autonomous
-public class AutoRight extends LinearOpMode {
+public class AutoLeft extends LinearOpMode {
     boolean finished = false;
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
@@ -64,10 +64,10 @@ public class AutoRight extends LinearOpMode {
         lift.setManual(false);
         lift.reset();
         lift.setGoingTo(0);
-        claw.setGoingTo(0);
 
 
-       camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"));
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
 
         camera.setPipeline(aprilTagDetectionPipeline);
@@ -93,30 +93,25 @@ public class AutoRight extends LinearOpMode {
          * This REPLACES waitForStart!
          */
 
-        drive.setPoseEstimate(new Pose2d(-36, 63, Math.toRadians(270)));
+        drive.setPoseEstimate(new Pose2d(39, 63, Math.toRadians(270)));
 
         finished = false;
-        TrajectorySequence ree = drive.trajectorySequenceBuilder(new Pose2d(-36, 63, Math.toRadians(270)))
+        TrajectorySequence ree = drive.trajectorySequenceBuilder(new Pose2d(39, 63, Math.toRadians(270)))
+                .waitSeconds(1)
+
                 .addTemporalMarker(() -> {
                     lift.setGoingTo(1);
                 })
                 .waitSeconds(0.5)
 
                 // Drop preload
-                .setTangent(Math.toRadians(0))
-                .setVelConstraint(new TrajectoryVelocityConstraint() {
-                    @Override
-                    public double get(double v, @NonNull Pose2d pose2d, @NonNull Pose2d pose2d1, @NonNull Pose2d pose2d2) {
-                        return 30;
-                    }
-                })
-                .splineToConstantHeading(new Vector2d(-9, 43), Math.toRadians(270))
+                .setTangent(Math.toRadians(180))
+                .splineToConstantHeading(new Vector2d(10, 38), Math.toRadians(270))
                 .addTemporalMarker(() -> {
                     lift.setGoingTo(3);
                 })
-                .resetVelConstraint()
-                .splineToConstantHeading(new Vector2d(-9, 20), Math.toRadians(270))
-                .splineToConstantHeading(new Vector2d(-26, 13), Math.toRadians(270))
+                .splineToConstantHeading(new Vector2d(10, 20), Math.toRadians(270))
+                .splineToConstantHeading(new Vector2d(28, 11), Math.toRadians(270))
                 .waitSeconds(0.5)
                 .addTemporalMarker(() -> {
                     lift.setGoingToSpecific(3000);
@@ -126,30 +121,48 @@ public class AutoRight extends LinearOpMode {
                 // Get first cone
                 .waitSeconds(0.5)
                 .setTangent(Math.toRadians(90))
-                .splineToSplineHeading(new Pose2d(-52, 14, Math.toRadians(180)), Math.toRadians(180))
+                .splineToLinearHeading(new Pose2d(52, 13, Math.toRadians(0)), Math.toRadians(0))
                 .addTemporalMarker(() -> {
-                    lift.setGoingToSpecific(540);
+                    lift.setGoingToSpecific(584);
                 })
                 .waitSeconds(1)
-                .setTangent(Math.toRadians(-180))
-                .splineToConstantHeading(new Vector2d(-65, 13), Math.toRadians(-180))
-                .setTangent(Math.toRadians(90))
                 .addTemporalMarker(() -> {
+                    ElapsedTime time = new ElapsedTime();
+                    time.reset();
+                    time.startTime();
+                    while (claw.distanceCentimeters() > 2.3 && time.seconds() < 1.5) {
+                        telemetry.addData("Distance: ", claw.distanceCentimeters());
+                        telemetry.update();
+                        drive.setWeightedDrivePower(new Pose2d(
+                                0.3, 0, 0
+                        ));
+                    }
+                    time.reset();
+                    drive.setWeightedDrivePower(new Pose2d(
+                            0, 0, 0
+                    ));
+                    drive.setPoseEstimate(new Pose2d(
+                            69, 13, Math.toRadians(0)
+                    ));
                     claw.setGoingTo(0);
                 })
-                .waitSeconds(0.5)
+                .waitSeconds(1)
                 .addTemporalMarker(() -> {
                     lift.setGoingTo(2);
                 })
                 .waitSeconds(0.5)
 
                 // Drop first cone
-                .setTangent(Math.toRadians(0))
-                .splineToSplineHeading(new Pose2d(-53, 12, Math.toRadians(180)), Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d(53, 13, Math.toRadians(0)), Math.toRadians(180))
                 .addTemporalMarker(() -> {
                     lift.setGoingTo(3);
                 })
-                .splineToSplineHeading(new Pose2d(-26, 10, Math.toRadians(270)), Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d(40, 13, Math.toRadians(315)), Math.toRadians(180))
+                .splineToLinearHeading(new Pose2d(28, 11, Math.toRadians(270)), Math.toRadians(270))
+
+                /*.addTemporalMarker(() -> {
+                    drive.setPoseEstimate(new Pose2d(-28, 11, Math.toRadians(270)));
+                })*/
                 .waitSeconds(0.5)
                 .addTemporalMarker(() -> {
                     lift.setGoingToSpecific(3000);
@@ -158,91 +171,55 @@ public class AutoRight extends LinearOpMode {
 
                 // Get second cone
                 .waitSeconds(0.5)
-                .setTangent(Math.toRadians(180))
-                .splineToSplineHeading(new Pose2d(-52, 11, Math.toRadians(180)), Math.toRadians(180))
+                .setTangent(Math.toRadians(90))
+                .splineToLinearHeading(new Pose2d(52, 13, Math.toRadians(0)), Math.toRadians(0))
                 .addTemporalMarker(() -> {
-                    lift.setGoingToSpecific(420);
+                    lift.setGoingToSpecific(525);
                 })
                 .waitSeconds(1)
-                .setTangent(Math.toRadians(-180))
-                .splineToConstantHeading(new Vector2d(-64, 11), Math.toRadians(-180))
-                .setTangent(Math.toRadians(90))
                 .addTemporalMarker(() -> {
+                    ElapsedTime time = new ElapsedTime();
+                    time.reset();
+                    time.startTime();
+                    while (claw.distanceCentimeters() > 2.1 && time.seconds() < 1.5) {
+                        telemetry.addData("Distance: ", claw.distanceCentimeters());
+                        telemetry.update();
+                        drive.setWeightedDrivePower(new Pose2d(
+                                0.3, 0, 0
+                        ));
+                    }
+                    time.reset();
+                    drive.setWeightedDrivePower(new Pose2d(
+                            0, 0, 0
+                    ));
+                    drive.setPoseEstimate(new Pose2d(
+                            69, 13, Math.toRadians(0)
+                    ));
                     claw.setGoingTo(0);
                 })
-                .waitSeconds(0.5)
+                .waitSeconds(1)
                 .addTemporalMarker(() -> {
                     lift.setGoingTo(2);
                 })
                 .waitSeconds(0.5)
 
                 // Drop second cone
-                .setTangent(Math.toRadians(0))
-                .splineToSplineHeading(new Pose2d(-53, 12, Math.toRadians(180)), Math.toRadians(0))
+                .setTangent(Math.toRadians(180))
+                .splineToSplineHeading(new Pose2d(53, 13, Math.toRadians(0)), Math.toRadians(180))
                 .addTemporalMarker(() -> {
                     lift.setGoingTo(3);
                 })
-                .splineToSplineHeading(new Pose2d(-23.4, 8.5, Math.toRadians(270)), Math.toRadians(0))
+                .splineToSplineHeading(new Pose2d(28, 11, Math.toRadians(270)), Math.toRadians(270))
+                /*.addTemporalMarker(() -> {
+                    drive.setPoseEstimate(new Pose2d(-28, 11, Math.toRadians(270)));
+                })*/
                 .waitSeconds(0.5)
                 .addTemporalMarker(() -> {
                     lift.setGoingToSpecific(3000);
                     claw.setGoingTo(1);
                 })
-                .waitSeconds(0.5)
 
-
-/*
-//                // Get second cone
-//                .waitSeconds(0.5)
-//                .setTangent(Math.toRadians(80)) //90
-//                .splineToSplineHeading(new Pose2d(-52, 13, Math.toRadians(180)), Math.toRadians(180))
-//                .addTemporalMarker(() -> {
-//                    lift.setGoingToSpecific(420);
-//                })
-//                .waitSeconds(1)
-//                /*.addTemporalMarker(() -> {
-//                    ElapsedTime time = new ElapsedTime();
-//                    time.reset();
-//                    time.startTime();
-//                    while (claw.distanceCentimeters() > 3 && time.seconds() < 1.2) {
-//                        telemetry.addData("Distance: ", claw.distanceCentimeters());
-//                        telemetry.update();
-//                        drive.setWeightedDrivePower(new Pose2d(
-//                                0.3, 0, 0
-//                        ));
-//                    }
-//                    time.reset();
-//                    drive.setWeightedDrivePower(new Pose2d(
-//                            0, 0, 0
-//                    ));
-//                    drive.setPoseEstimate(new Pose2d(
-//                            -66, 13, Math.toRadians(-180)
-//                    ));
-//                    claw.setGoingTo(0);
-//                })*/
-//
-//                .waitSeconds(1)
-//                .addTemporalMarker(() -> {
-//                    lift.setGoingTo(2);
-//                })
-//                .waitSeconds(0.5)
-//
-//                // Drop second cone
-//                .setTangent(Math.toRadians(0))
-//                .splineToSplineHeading(new Pose2d(-53, 13, Math.toRadians(180)), Math.toRadians(0))
-//                .addTemporalMarker(() -> {
-//                    lift.setGoingTo(3);
-//                })
-//                .splineToSplineHeading(new Pose2d(-26, 9, Math.toRadians(270)), Math.toRadians(270))
-//                /*.addTemporalMarker(() -> {
-//                    drive.setPoseEstimate(new Pose2d(-28, 11, Math.toRadians(270)));
-//                })*/
-//                .waitSeconds(0.5)
-//                .addTemporalMarker(() -> {
-//                    lift.setGoingToSpecific(3000);
-//                    claw.setGoingTo(1);
-//                })
-
+                .waitSeconds(20)
                 .addTemporalMarker(() -> {
                     finished = true;
                 })
@@ -250,18 +227,16 @@ public class AutoRight extends LinearOpMode {
                 .build();
 
         TrajectorySequence strafeRight = drive.trajectorySequenceBuilder(ree.end())
-                .back(3)
-                .lineToSplineHeading(new Pose2d(-60, 14, Math.toRadians(270)))
+                .lineToSplineHeading(new Pose2d(-60, 12, Math.toRadians(270)))
                 .build();
 
         TrajectorySequence strafeLeft = drive.trajectorySequenceBuilder(ree.end())
-                .back(3)
-                .lineToSplineHeading(new Pose2d(-14, 14, Math.toRadians(270)))
+                .lineToSplineHeading(new Pose2d(-12, 10, Math.toRadians(270)))
                 .build();
 
         TrajectorySequence dontStrafe = drive.trajectorySequenceBuilder(ree.end())
                 .back(3)
-                .strafeRight(13)
+                .turn(Math.toRadians(-50))
                 .build();
 
         while (!isStarted() && !isStopRequested()) {
@@ -305,7 +280,6 @@ public class AutoRight extends LinearOpMode {
             }
 
             lift.update(0);
-            claw.update();
             telemetry.addLine("Claw closed");
             telemetry.update();
             sleep(20);
@@ -326,6 +300,7 @@ public class AutoRight extends LinearOpMode {
             telemetry.update();
         }
 
+        claw.setGoingTo(0);
 
         drive.followTrajectorySequenceAsync(ree);
 
@@ -341,11 +316,11 @@ public class AutoRight extends LinearOpMode {
 
         /* Actually do something useful */
         if (tagOfInterest == null || tagOfInterest.id == LEFT) {
-            drive.followTrajectorySequence(strafeLeft);
+            //drive.followTrajectorySequence(strafeLeft);
         } else if (tagOfInterest.id == MIDDLE) {
-            drive.followTrajectorySequence(dontStrafe);
+            //drive.followTrajectorySequence(dontStrafe);
         } else {
-            drive.followTrajectorySequence(strafeRight);
+            //sdrive.followTrajectorySequence(strafeRight);
         }
 
 //        /* You wouldn't have this in your autonomous, this is just to prevent the sample from ending */

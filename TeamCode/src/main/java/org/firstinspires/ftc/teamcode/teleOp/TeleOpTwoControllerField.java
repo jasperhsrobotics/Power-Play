@@ -47,14 +47,12 @@ public class TeleOpTwoControllerField extends OpMode {
             lift.setGoingTo(3);
         }
 
-//        if (gamepad2.dpad_left) {
-//            lift.reset();
-//        }
-
         if (gamepad1.left_bumper) {
             chassis.speed = 0.3;
+        } else if (gamepad1.right_bumper) {
+            chassis.speed = 0.95;
         } else {
-            chassis.speed = 0.9;
+            chassis.speed = 0.5;
         }
 
         // 0 is inner
